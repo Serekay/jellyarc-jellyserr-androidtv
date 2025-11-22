@@ -9,3 +9,4 @@ build/
 captures/
 dist/
 *.ps1
+COMMANDS.md
