@@ -47,10 +47,10 @@ Client-side integration that brings Jellyseerr discovery and requests into Jelly
 
 ---
 
-## Optional: Remote Access with Tailscale (VPN)
+## Optional bonus information: Remote Access with Tailscale (VPN)
 
 Use Tailscale to reach your Jellyfin server without opening ports.
-- If your Jellyfin server runs in Docker/Unraid, make sure Tailscale is already set up in your stack (see https://tailscale.com/kb/1153/docker for a quick guide).
+- If your Jellyfin server runs in Docker/Unraid, make sure Tailscale is already set up in your stack (see https://tailscale.com/kb/1352/servers and read the documentation).
 
 ### Desktop/Laptop without sharing credentials
 1. Install Tailscale.
