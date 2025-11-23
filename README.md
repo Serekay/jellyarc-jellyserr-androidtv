@@ -11,15 +11,13 @@ Client-side integration that brings Jellyseerr discovery and requests into Jelly
 ## Features
 
 ### In-app update (GitHub releases)
-- The app can update itself by downloading the APK from the project's GitHub releases: https://github.com/Serekay/jellyfin-jellyserr-tv/releases
-- Requirement: grant the app the "Install unknown apps" permission once (Settings → Apps → [This app] → Install unknown apps → Allow). This one-time permission allows the app to install its downloaded updates.
+- Why: the app downloads APKs for in‑app updates and must be allowed to install them. On Android TV the system will prompt for this permission when the app first attempts an installation — you generally cannot enable it in advance from app settings.
+- Permission flow: When the app attempts to install an update, Android may open the "Install unknown apps" settings screen. Enable the "Allow from this source" toggle for the app shown (e.g., the browser or file manager used to download the APK — or the app listed as JellyArc), then return to Jellyfin Jellyseerr TV and retry the update. This permission is granted per app and typically only needs to be enabled once.
 - Behavior:
    - On startup the app checks for a newer release and shows an update prompt if one is available.
-   - You can also manually trigger a check: Settings → Check for updates.
-- When an update is available the app will prompt to install the downloaded APK; confirm the installation. If you see "App not installed", verify the "Install unknown apps" permission and available storage, then retry.
-- Updates are delivered via the APK included in the GitHub release (usually named `app-release.apk`).
-- Note: granting the permission only enables the in-app installer; it does not change other app behavior.
-- Security tip: only install updates from the official releases page linked above.
+   - You can also trigger a manual check: Settings → Check for updates.
+- Installing an update: when prompted, confirm the installation of the downloaded APK.
+- Troubleshooting: if you see "App not installed", ensure you accepted the install prompt when it appeared and check available storage; free space if needed and try again. If problems persist, install the APK manually from the releases page.
 
 ## Install the Android TV APK (Sideload)
 
