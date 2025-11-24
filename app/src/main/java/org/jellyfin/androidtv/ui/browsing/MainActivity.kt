@@ -7,6 +7,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
@@ -29,9 +32,10 @@ import org.jellyfin.androidtv.ui.navigation.NavigationAction
 import org.jellyfin.androidtv.ui.navigation.NavigationRepository
 import org.jellyfin.androidtv.ui.screensaver.InAppScreensaver
 import org.jellyfin.androidtv.ui.startup.StartupActivity
+import org.jellyfin.androidtv.ui.update.UpdateDialog
+import org.jellyfin.androidtv.ui.update.UpdateDialogViewModel
 import org.jellyfin.androidtv.util.applyTheme
 import org.jellyfin.androidtv.util.isMediaSessionKeyEvent
-import org.jellyfin.androidtv.util.UpdateChecker
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -44,6 +48,7 @@ class MainActivity : FragmentActivity() {
 	private val workManager by inject<WorkManager>()
 
 	private lateinit var binding: ActivityMainBinding
+	private var updateDialogViewModel by mutableStateOf<UpdateDialogViewModel?>(null)
 
 	private val backPressedCallback = object : OnBackPressedCallback(false) {
 		override fun handleOnBackPressed() {
@@ -80,8 +85,28 @@ class MainActivity : FragmentActivity() {
 		binding.screensaver.setContent { InAppScreensaver() }
 		setContentView(binding.root)
 
+		// Update Dialog als Overlay
+		binding.root.addView(
+			androidx.compose.ui.platform.ComposeView(this).apply {
+				setContent {
+					updateDialogViewModel?.let { viewModel ->
+						UpdateDialog(
+							viewModel = viewModel,
+							onDismiss = { updateDialogViewModel = null }
+						)
+					}
+				}
+			}
+		)
+
+		// Prüfe auf Updates beim Start
 		lifecycleScope.launch {
-			UpdateChecker.notifyIfUpdateAvailable(this@MainActivity, BuildConfig.VERSION_NAME)
+			val viewModel = UpdateDialogViewModel(
+				context = this@MainActivity,
+				currentVersion = BuildConfig.VERSION_NAME
+			)
+			updateDialogViewModel = viewModel
+			viewModel.checkForUpdate(notifyIfCurrent = false)
 		}
 	}
 

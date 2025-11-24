@@ -637,5 +637,15 @@
     <string name="jellyseerr_update_launch_installer">Opening installer…</string>
     <string name="jellyseerr_update_install_failed">Could not open installer. Please try again.</string>
     <string name="jellyseerr_update_permission_required">Allow installation from this app in system settings to continue.</string>
+    <string name="jellyseerr_update_checking">Checking for updates…</string>
+    <string name="jellyseerr_update_available_title">Update Available</string>
+    <string name="jellyseerr_update_available_message">A new version %1$s is available.</string>
+    <string name="jellyseerr_update_current_title">Up to Date</string>
+    <string name="jellyseerr_update_current_message">You already have the latest version.</string>
+    <string name="jellyseerr_update_error_title">Update Error</string>
+    <string name="jellyseerr_update_check_failed">Failed to check for updates. Please try again later.</string>
+    <string name="jellyseerr_update_installing">Installing update…</string>
+    <string name="jellyseerr_update_installing_message">Please wait while the installer is being prepared.</string>
+    <string name="jellyseerr_update_install_button">Install</string>
 </resources>
 

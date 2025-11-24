@@ -1,16 +1,9 @@
 package org.jellyfin.androidtv.util
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.util.Log
-import android.view.Gravity
-import android.widget.Toast
-import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jellyfin.androidtv.R
 import org.json.JSONObject
 import java.io.File
 import java.io.InputStream
@@ -86,98 +79,6 @@ object UpdateChecker {
 		return false
 	}
 
-	suspend fun notifyIfUpdateAvailable(context: Context, currentVersion: String, notifyIfCurrent: Boolean = false): ReleaseInfo? {
-		val release = fetchLatestRelease(currentVersion)
-
-		return when {
-			release != null -> {
-				context.showCenteredToast(context.getString(R.string.jellyseerr_update_available_toast, release.version))
-				release
-			}
-
-			notifyIfCurrent -> {
-				context.showCenteredToast(context.getString(R.string.jellyseerr_update_current_toast))
-				null
-			}
-
-			else -> null
-		}
-	}
-
-	suspend fun downloadAndInstall(context: Context, currentVersion: String, notifyIfCurrent: Boolean = false): ReleaseInfo? {
-		clearOldApk(context)
-		val release = notifyIfUpdateAvailable(context, currentVersion, notifyIfCurrent)
-		release ?: return null
-
-		context.showCenteredToast(context.getString(R.string.jellyseerr_update_downloading))
-
-		val apkFile = downloadApk(context, release.downloadUrl)
-		if (apkFile == null) {
-			context.showCenteredToast(context.getString(R.string.jellyseerr_update_download_failed))
-			return release
-		}
-
-		// Permission to install from unknown sources (Android 8.0+)
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			val canInstall = context.packageManager.canRequestPackageInstalls()
-			if (!canInstall) {
-				context.showCenteredToast(context.getString(R.string.jellyseerr_update_permission_required))
-				val settingsIntent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-					data = Uri.parse("package:${context.packageName}")
-					addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-				}
-				runCatching { context.startActivity(settingsIntent) }
-					.onFailure { Log.w(TAG, "Failed to open unknown sources settings", it) }
-				return release
-			}
-		}
-
-		context.showCenteredToast(context.getString(R.string.jellyseerr_update_launch_installer))
-		val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apkFile)
-		val intent = Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
-			setDataAndType(uri, "application/vnd.android.package-archive")
-			addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-			addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-			putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
-		}
-
-		runCatching { context.startActivity(intent) }
-			.onFailure {
-				Log.w(TAG, "Failed to launch installer", it)
-				context.showCenteredToast(context.getString(R.string.jellyseerr_update_install_failed))
-			}
-
-		return release
-	}
-
-	private suspend fun downloadApk(context: Context, url: String): File? = withContext(Dispatchers.IO) {
-		return@withContext try {
-			val target = File(context.cacheDir, APK_NAME)
-			if (target.exists()) target.delete()
-			val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-				requestMethod = "GET"
-				connectTimeout = 10000
-				readTimeout = 20000
-			}
-
-			connection.inputStream.use { input ->
-				target.outputStream().use { output ->
-					copyStream(input, output)
-				}
-			}
-			target
-		} catch (ex: Exception) {
-			Log.w(TAG, "Download failed", ex)
-			null
-		}
-	}
-
-	private fun clearOldApk(context: Context) {
-		runCatching {
-			val target = File(context.cacheDir, APK_NAME)
-			if (target.exists()) target.delete()
-		}
-	}
 
 	private fun copyStream(input: InputStream, output: OutputStream, bufferSize: Int = 8 * 1024) {
 		val buffer = ByteArray(bufferSize)
@@ -188,9 +89,68 @@ object UpdateChecker {
 		}
 	}
 
-	private fun Context.showCenteredToast(message: String) {
-		Toast.makeText(this, message, Toast.LENGTH_LONG).apply {
-			setGravity(Gravity.CENTER, 0, 0)
-		}.show()
+	private fun copyStreamWithProgress(
+		input: InputStream,
+		output: OutputStream,
+		totalBytes: Long,
+		onProgress: (Float) -> Unit,
+		bufferSize: Int = 8 * 1024
+	) {
+		val buffer = ByteArray(bufferSize)
+		var bytesRead = 0L
+
+		while (true) {
+			val read = input.read(buffer)
+			if (read <= 0) break
+			output.write(buffer, 0, read)
+			bytesRead += read
+
+			if (totalBytes > 0) {
+				val progress = (bytesRead.toFloat() / totalBytes.toFloat()).coerceIn(0f, 1f)
+				onProgress(progress)
+			}
+		}
+		onProgress(1f) // Ensure we reach 100%
+	}
+
+	suspend fun downloadApkWithProgress(
+		context: Context,
+		url: String,
+		onProgress: (Float) -> Unit
+	): File? = withContext(Dispatchers.IO) {
+		return@withContext try {
+			val target = File(context.cacheDir, APK_NAME)
+			if (target.exists()) target.delete()
+
+			val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+				requestMethod = "GET"
+				connectTimeout = 10000
+				readTimeout = 20000
+			}
+
+			val totalBytes = connection.contentLengthLong
+
+			connection.inputStream.use { input ->
+				target.outputStream().use { output ->
+					if (totalBytes > 0) {
+						copyStreamWithProgress(input, output, totalBytes, onProgress)
+					} else {
+						copyStream(input, output)
+						onProgress(1f)
+					}
+				}
+			}
+			target
+		} catch (ex: Exception) {
+			Log.w(TAG, "Download failed", ex)
+			null
+		}
+	}
+
+	fun clearOldApk(context: Context) {
+		runCatching {
+			val target = File(context.cacheDir, APK_NAME)
+			if (target.exists()) target.delete()
+		}
 	}
 }

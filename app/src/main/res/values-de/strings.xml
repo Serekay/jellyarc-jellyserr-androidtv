@@ -637,4 +637,14 @@
     <string name="jellyseerr_update_launch_installer">Installationsdialog wird geöffnet…</string>
     <string name="jellyseerr_update_install_failed">Installer konnte nicht gestartet werden. Bitte erneut versuchen.</string>
     <string name="jellyseerr_update_permission_required">Erlaube in den Systemeinstellungen die Installation über diese App, um fortzufahren.</string>
+    <string name="jellyseerr_update_checking">Suche nach Updates…</string>
+    <string name="jellyseerr_update_available_title">Update verfügbar</string>
+    <string name="jellyseerr_update_available_message">Eine neue Version %1$s ist verfügbar.</string>
+    <string name="jellyseerr_update_current_title">Aktuell</string>
+    <string name="jellyseerr_update_current_message">Du hast bereits die neueste Version.</string>
+    <string name="jellyseerr_update_error_title">Update-Fehler</string>
+    <string name="jellyseerr_update_check_failed">Fehler beim Suchen nach Updates. Bitte versuche es später erneut.</string>
+    <string name="jellyseerr_update_installing">Installiere Update…</string>
+    <string name="jellyseerr_update_installing_message">Bitte warten, während der Installer vorbereitet wird.</string>
+    <string name="jellyseerr_update_install_button">Installieren</string>
 </resources>
