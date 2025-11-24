@@ -70,16 +70,18 @@ Use Tailscale to reach your Jellyfin server without opening ports.
 6. In the Jellyfin app, add the server using the Tailscale IP (e.g., `http://100.x.x.x:8096`) and sign in.
 
 ### Always-On via ADB (keeps VPN alive after reboot, other apps stay local)
-1. Install “ADB TV” or an similar App on the TV.
-2. Enable developer options (Settings → Device → About → tap “Build number” 7×), then enable USB debugging.
-3. In ADB TV run, one by one:
+1. Install “ADB TV” (Recommended beacuase its the best way directly in Android Tv!) or an similar App on the TV.
+   - it should be Available in Play store on your TV, if not check the Hompeage: https://adbappcontrol.com/en/tv/ and Side Load the App. You don´t need an Pro Abo ignore that.
+2. Enable developer options (Settings → Device → About → tap “Build number” 7×), then enable USB debugging before start the app, or just follow the Instructions in ADB TV.
+3. After that open the sehll in ADB TV and run, one by one:
    ```bash
    settings put secure always_on_vpn_app com.tailscale.ipn
    settings put secure always_on_vpn_lockdown 0
    ```
-4. Restart the TV. Tailscale connects automatically; Netflix/YouTube and other traffic remain outside the VPN (lockdown=0).
+4. Done. After every restart of your TV, Tailscale connects automatically; Netflix/YouTube and other traffic remain outside the VPN (lockdown=0).
    - Why only Jellyfin goes through the VPN: with `always_on_vpn_lockdown` set to `0`, Android allows non-VPN traffic. Your Jellyfin app uses the Tailscale IP of the server (100.x.x.x), so that traffic is routed via the VPN interface. Other apps keep using the normal LAN/WAN route, so your TV’s general traffic is not tunneled just the Jellyfin App.
 
+   You just need to do this 1x, maybe after an TV update you need to repeat that steps.
 ---
 
 ## Known issues
