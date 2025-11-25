@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="pref_authentication_cat">Автентифікація</string>
     <string name="settings_title">Налаштування</string>
@@ -652,7 +652,7 @@
     <string name="jellyseerr_update_available_toast">Доступне оновлення: v%1$s</string>
     <string name="jellyseerr_update_current_toast">У вас вже остання версія.</string>
     <string name="jellyseerr_update_downloading">Завантаження оновлення…</string>
-    <string name="jellyseerr_update_download_failed">Не вдалося завантажити оновлення. Будь ласка, перевірте своє інтернет-з'єднання та вільне місце на диску. Спробуйте ще раз пізніше, якщо потрібно.</string>
+    <string name="jellyseerr_update_download_failed">Не вдалося завантажити оновлення. Перевірте з\'єднання з інтернетом і вільне місце на диску. За потреби спробуйте пізніше.</string>
     <string name="jellyseerr_update_launch_installer">Відкриття інсталятора…</string>
     <string name="jellyseerr_update_install_failed">Не вдалося відкрити інсталятор. Будь ласка, спробуйте ще раз.</string>
     <string name="jellyseerr_update_permission_required">Дозвольте установку з цього додатку в налаштуваннях системи, щоб продовжити.</string>

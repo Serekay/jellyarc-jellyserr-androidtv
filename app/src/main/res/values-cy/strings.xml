@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="lbl_shuffle_all">Cymysgu Pobeth</string>
     <string name="lbl_play_all">Chwarae Pob Un</string>
@@ -164,8 +164,8 @@
     <string name="jellyseerr_popular_title">Ffilmiau poblogaidd</string>
     <string name="jellyseerr_cast_title">Cast</string>
     <string name="jellyseerr_watch_trailer_button">Gweld trelar</string>
-    <string name="jellyseerr_trailer_unavailable">Nid yw'r trelar ar gael ar hyn o bryd.</string>
-    <string name="jellyseerr_trailer_error">Methwyd llwytho'r trelar.</string>
+    <string name="jellyseerr_trailer_unavailable">Nid yw\'r trelar ar gael ar hyn o bryd.</string>
+    <string name="jellyseerr_trailer_error">Methwyd llwytho\'r trelar.</string>
     <string name="jellyseerr_error_prefix">Gwall: %1$s</string>
     <string name="jellyseerr_view_all_trends">Gweld pob un</string>
     <string name="jellyseerr_recently_added_title">Ychwanegwyd yn ddiweddar</string>
@@ -178,7 +178,7 @@
     <string name="jellyseerr_movie_studios_title">Stiwdios ffilmiau</string>
     <string name="jellyseerr_tv_networks_title">Rhaglenni</string>
     <string name="jellyseerr_view_more">Gweld mwy</string>
-    <string name="jellyseerr_request_sended">Cais wedi'i anfon</string>
+    <string name="jellyseerr_request_sended">Cais wedi\'i anfon</string>
     <string name="jellyseerr_request_error">Methwyd y cais</string>
     <string name="jellyseerr_seasons_label">Dewis tymhorau</string>
     <string name="jellyseerr_seasons_all">Pob tymor</string>
@@ -187,24 +187,24 @@
     <string name="jellyseerr_episode_missing_badge">Ar goll</string>
     <string name="jellyseerr_no_episodes">Dim penodau ar gael.</string>
     <string name="jellyseerr_episode_title_missing">Penod</string>
-    <string name="jellyseerr_pref_url_missing">Heb ei ffurfweddu. Gofynnwch i'ch gweinyddwr osod y plwg-in Jellyseerr Requests Bridge ar y gweinydd (https://github.com/Serekay/jellyfin-requests-bridge).</string>
+    <string name="jellyseerr_pref_url_missing">Heb ei ffurfweddu. Gofynnwch i\'ch gweinyddwr osod yr ategyn Jellyseerr Requests Bridge ar y gweinydd (https://github.com/Serekay/jellyfin-requests-bridge).</string>
     <string name="jellyseerr_update_check_title">Gwirio am ddiweddariadau</string>
     <string name="jellyseerr_update_check_summary">Gwirio am ryddhad JellyArc TV newydd ar GitHub.</string>
     <string name="jellyseerr_update_available_toast">Diweddariad ar gael: v%1$s</string>
-    <string name="jellyseerr_update_current_toast">Mae gennych chi'r fersiwn ddiweddaraf eisoes.</string>
+    <string name="jellyseerr_update_current_toast">Mae gennych chi\'r fersiwn diweddaraf eisoes.</string>
     <string name="jellyseerr_update_downloading">Llwytho diweddariad…</string>
-    <string name="jellyseerr_update_download_failed">Methwyd llwytho'r diweddariad. Gwiriwch eich cysylltiad rhyngrwyd a'ch lle ar ddisg. Ceisiwch eto yn ddiweddarach os oes angen.</string>
+    <string name="jellyseerr_update_download_failed">Methwyd llwytho\'r diweddariad. Gwiriwch eich cysylltiad rhyngrwyd a\'ch lle ar ddisg. Ceisiwch eto yn ddiweddarach os oes angen.</string>
     <string name="jellyseerr_update_launch_installer">Agor yr gosodwr…</string>
     <string name="jellyseerr_update_install_failed">Methwyd agor yr gosodwr. Ceisiwch eto.</string>
-    <string name="jellyseerr_update_permission_required">Caniatáu gosod o'r ap hwn yn y gosodiadau system i barhau.</string>
+    <string name="jellyseerr_update_permission_required">Caniat?u gosod o\'r ap hwn yn y gosodiadau system i barhau.</string>
     <string name="jellyseerr_update_checking">Gwirio am ddiweddariadau…</string>
     <string name="jellyseerr_update_available_title">Diweddariad ar gael</string>
     <string name="jellyseerr_update_available_message">Mae fersiwn newydd %1$s ar gael.</string>
     <string name="jellyseerr_update_current_title">I Ddod i Fyny</string>
-    <string name="jellyseerr_update_current_message">Mae gennych chi'r fersiwn ddiweddaraf eisoes.</string>
+    <string name="jellyseerr_update_current_message">Mae gennych chi\'r fersiwn diweddaraf eisoes.</string>
     <string name="jellyseerr_update_error_title">Gwall Diweddariad</string>
     <string name="jellyseerr_update_check_failed">Methwyd gwirio am ddiweddariadau. Ceisiwch eto yn ddiweddarach.</string>
     <string name="jellyseerr_update_installing">Gosod diweddariad…</string>
-    <string name="jellyseerr_update_installing_message">Aroswch tra bo'r gosodwr yn cael ei baratoi.</string>
+    <string name="jellyseerr_update_installing_message">Aroswch tra bo\'r gosodwr yn cael ei baratoi.</string>
     <string name="jellyseerr_update_install_button">Gosod</string>
 </resources>

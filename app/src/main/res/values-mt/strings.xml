@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="jellyseerr_lbl_requests">Talbiet</string>
     <string name="jellyseerr_search_results_title">Riżultati tal-iskoperta</string>
@@ -39,7 +39,7 @@
     <string name="jellyseerr_episode_title_missing">Episodju</string>
     <string name="jellyseerr_pref_url_missing">Mhux ikkuntattjat. Staqsi lill-amministratur tiegħek biex jissettja l-plugin tal-Jellyseerr Requests Bridge fuq is-server (https://github.com/Serekay/jellyfin-requests-bridge).</string>
     <string name="jellyseerr_update_check_title">Iċċekkja għall-aġġornamenti</string>
-    <string name="jellyseerr_update_check_summary">Iċċekkja għal rilaxx aktar ġdid ta' JellyArc TV fuq GitHub.</string>
+    <string name="jellyseerr_update_check_summary">Iċċekkja għal rilaxx aktar ġdid ta\' JellyArc TV fuq GitHub.</string>
     <string name="jellyseerr_update_available_toast">Aġġornament disponibbli: v%1$s</string>
     <string name="jellyseerr_update_current_toast">Diġà għandek il-verżjoni l-ġdida.</string>
     <string name="jellyseerr_update_downloading">Niżżel aġġornament…</string>
