@@ -108,6 +108,24 @@ class JellyseerrViewModel(
 		discoveryActions.showTvGenre(genre)
 	}
 
+	fun showMovieGenreFromDetail(genre: JellyseerrGenreSlider) {
+		val overlay = detailActions.snapshotOverlay()
+		if (overlay != null) {
+			_uiState.update { it.copy(discoverReturnOverlay = overlay) }
+		}
+		detailActions.clearOverlays()
+		discoveryActions.showMovieGenre(genre)
+	}
+
+	fun showTvGenreFromDetail(genre: JellyseerrGenreSlider) {
+		val overlay = detailActions.snapshotOverlay()
+		if (overlay != null) {
+			_uiState.update { it.copy(discoverReturnOverlay = overlay) }
+		}
+		detailActions.clearOverlays()
+		discoveryActions.showTvGenre(genre)
+	}
+
 	fun showMovieStudio(company: JellyseerrCompany) {
 		discoveryActions.showMovieStudio(company)
 	}
@@ -126,6 +144,11 @@ class JellyseerrViewModel(
 
 	fun closeAllTrends() {
 		discoveryActions.closeAllTrends()
+		val restoreOverlay = _uiState.value.discoverReturnOverlay
+		if (restoreOverlay != null) {
+			detailActions.restoreOverlay(restoreOverlay)
+			_uiState.update { it.copy(discoverReturnOverlay = null) }
+		}
 	}
 
 	fun request(item: JellyseerrSearchItem, seasons: List<Int>? = null) {

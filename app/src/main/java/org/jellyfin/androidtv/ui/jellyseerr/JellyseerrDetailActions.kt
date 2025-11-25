@@ -13,7 +13,7 @@ import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.ui.jellyseerr.JellyseerrOverlayEntry.Detail
 import org.jellyfin.androidtv.ui.jellyseerr.JellyseerrOverlayEntry.Person
 
-internal class JellyseerrDetailActions(
+	internal class JellyseerrDetailActions(
 	private val repository: JellyseerrRepository,
 	private val state: MutableStateFlow<JellyseerrUiState>,
 	private val scope: CoroutineScope,
@@ -21,10 +21,55 @@ internal class JellyseerrDetailActions(
 	private val context: Context,
 	private val loadRecentRequests: suspend () -> Unit,
 ) {
+	fun clearOverlays() {
+		state.update {
+			it.copy(
+				selectedItem = null,
+				selectedMovie = null,
+				selectedPerson = null,
+				personCredits = emptyList(),
+				overlayStack = emptyList(),
+				requestStatusMessage = null,
+				errorMessage = null,
+				isLoading = false,
+			)
+		}
+	}
+
 	private fun currentOverlayEntry(current: JellyseerrUiState): JellyseerrOverlayEntry? = when {
 		current.selectedItem != null -> Detail(current.selectedItem, current.selectedMovie)
 		current.selectedPerson != null -> Person(current.selectedPerson, current.personCredits)
 		else -> null
+	}
+
+	fun snapshotOverlay(): JellyseerrOverlayEntry? = currentOverlayEntry(state.value)
+
+	fun restoreOverlay(entry: JellyseerrOverlayEntry) {
+		state.update {
+			when (entry) {
+				is Detail -> it.copy(
+					selectedItem = entry.item,
+					selectedMovie = entry.details,
+					selectedPerson = null,
+					personCredits = emptyList(),
+					overlayStack = emptyList(),
+					isLoading = false,
+					errorMessage = null,
+					requestStatusMessage = null,
+				)
+
+				is Person -> it.copy(
+					selectedItem = null,
+					selectedMovie = null,
+					selectedPerson = entry.person,
+					personCredits = entry.credits,
+					overlayStack = emptyList(),
+					isLoading = false,
+					errorMessage = null,
+					requestStatusMessage = null,
+				)
+			}
+		}
 	}
 
 	private fun restorePreviousOverlay(): Boolean {

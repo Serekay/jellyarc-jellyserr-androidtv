@@ -77,6 +77,7 @@ import org.jellyfin.androidtv.data.repository.JellyseerrCast
 import org.jellyfin.androidtv.data.repository.JellyseerrPersonDetails
 import org.jellyfin.androidtv.data.repository.JellyseerrCompany
 import org.jellyfin.androidtv.data.repository.JellyseerrGenreSlider
+import org.jellyfin.androidtv.data.repository.JellyseerrGenre
 import org.jellyfin.androidtv.preference.UserPreferences
 import org.jellyfin.androidtv.ui.base.Icon
 import org.jellyfin.androidtv.ui.base.JellyfinTheme
@@ -274,6 +275,14 @@ private fun JellyseerrScreen(
 							onShowSeasonDialog = { showSeasonDialog = true },
 							onCastClick = { cast ->
 								viewModel.showPerson(cast)
+							},
+							onGenreClick = { genre ->
+								val slider = JellyseerrGenreSlider(id = genre.id, name = genre.name, backdropUrl = null)
+								if (selectedItem.mediaType == "tv") {
+									viewModel.showTvGenreFromDetail(slider)
+								} else {
+									viewModel.showMovieGenreFromDetail(slider)
+								}
 							},
 							firstCastFocusRequester = firstCastFocusRequester,
 						)
@@ -1854,12 +1863,25 @@ private fun JellyseerrPersonScreen(
     focusRequesterForItem: (String) -> FocusRequester,
     onItemFocused: (String) -> Unit,
 ) {
+    val firstCreditFocusRequester = remember { FocusRequester() }
+
+    // Try to put focus on the first credit card when opening the person screen
+    LaunchedEffect(person.id, credits.size) {
+        if (credits.isNotEmpty()) {
+            kotlinx.coroutines.delay(100)
+            firstCreditFocusRequester.requestFocus()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Box(
                 modifier = Modifier
                     .size(120.dp)
@@ -1897,12 +1919,16 @@ private fun JellyseerrPersonScreen(
                         .fillMaxWidth()
                         .padding(vertical = 20.dp),
                 ) {
-                    rowItems.forEach { item ->
+                    rowItems.forEachIndexed { index, item ->
                         val focusKey = "person_${person.id}_$rowIndex-${item.id}"
                         JellyseerrSearchCard(
                             item = item,
                             onClick = { onCreditClick(item) },
-                            focusRequester = focusRequesterForItem(focusKey),
+                            focusRequester = if (rowIndex == 0 && index == 0) {
+                                firstCreditFocusRequester
+                            } else {
+                                focusRequesterForItem(focusKey)
+                            },
                             onFocus = { onItemFocused(focusKey) },
                         )
                     }
@@ -2145,25 +2171,30 @@ private fun JellyseerrRecentRequestCard(
 }
 
 @Composable
-	private fun JellyseerrDetail(
-		item: JellyseerrSearchItem,
-		details: JellyseerrMovieDetails?,
-		seasonEpisodes: Map<SeasonKey, List<JellyseerrEpisode>> = emptyMap(),
-		requestStatusMessage: String?,
+private fun JellyseerrDetail(
+	item: JellyseerrSearchItem,
+	details: JellyseerrMovieDetails?,
+	seasonEpisodes: Map<SeasonKey, List<JellyseerrEpisode>> = emptyMap(),
+	requestStatusMessage: String?,
 		onRequestClick: (List<Int>?) -> Unit,
 		onCastClick: (JellyseerrCast) -> Unit,
+		onGenreClick: (JellyseerrGenre) -> Unit,
 		onShowSeasonDialog: () -> Unit,
 		firstCastFocusRequester: FocusRequester = remember { FocusRequester() },
 	) {
 		val requestButtonFocusRequester = remember { FocusRequester() }
+		val trailerButtonFocusRequester = remember { FocusRequester() }
+		val genreButtonFocusRequester = remember { FocusRequester() }
 		val coroutineScope = rememberCoroutineScope()
-		val navigationRepository = koinInject<org.jellyfin.androidtv.ui.navigation.NavigationRepository>()
-		val apiClient = koinInject<ApiClient>()
-		val playbackLauncher = koinInject<PlaybackLauncher>()
-		val context = LocalContext.current
-		val availableTitle = (details?.title ?: details?.name ?: item.title).trim()
-		val trailerButtonText = stringResource(R.string.jellyseerr_watch_trailer_button)
-		val isTv = item.mediaType == "tv"
+	val navigationRepository = koinInject<org.jellyfin.androidtv.ui.navigation.NavigationRepository>()
+	val apiClient = koinInject<ApiClient>()
+	val playbackLauncher = koinInject<PlaybackLauncher>()
+	val context = LocalContext.current
+	val availableTitle = (details?.title ?: details?.name ?: item.title).trim()
+	val trailerButtonText = stringResource(R.string.jellyseerr_watch_trailer_button)
+	val isTv = item.mediaType == "tv"
+	val trailerButtonEnabled = availableTitle.isNotBlank()
+	val genres = details?.genres.orEmpty()
 
 	Column(
 		modifier = Modifier
@@ -2282,6 +2313,25 @@ private fun JellyseerrRecentRequestCard(
 					else -> stringResource(R.string.jellyseerr_request_button)
 				}
 
+				val isMovieRequestDisabled = !isTv && isRequested && !isAvailable
+				val buttonEnabled = when {
+					isTv -> true
+					isAvailable -> true
+					isMovieRequestDisabled -> false
+					else -> true
+				}
+
+				// Ensure initial focus is always on a focusable control
+				LaunchedEffect(item.id, buttonEnabled) {
+					kotlinx.coroutines.delay(100)
+					when {
+						buttonEnabled -> requestButtonFocusRequester.requestFocus()
+						trailerButtonEnabled -> trailerButtonFocusRequester.requestFocus()
+						genres.isNotEmpty() -> genreButtonFocusRequester.requestFocus()
+						else -> firstCastFocusRequester.requestFocus()
+					}
+				}
+
 				Box(
 					contentAlignment = Alignment.Center,
 				) {
@@ -2323,7 +2373,7 @@ private fun JellyseerrRecentRequestCard(
 								}
 							}
 						},
-						enabled = true,
+						enabled = buttonEnabled,
 						colors = buttonColors,
 						interactionSource = requestButtonInteraction,
 						modifier = Modifier
@@ -2352,7 +2402,6 @@ private fun JellyseerrRecentRequestCard(
 					}
 				}
 
-				val trailerButtonEnabled = availableTitle.isNotBlank()
 				val trailerButtonInteraction = remember { MutableInteractionSource() }
 				val trailerButtonFocused by trailerButtonInteraction.collectIsFocusedAsState()
 				val trailerButtonColors = ButtonDefaults.colors(
@@ -2373,6 +2422,7 @@ private fun JellyseerrRecentRequestCard(
 					interactionSource = trailerButtonInteraction,
 					modifier = Modifier
 						.width(200.dp)
+						.focusRequester(trailerButtonFocusRequester)
 						.border(
 							width = if (trailerButtonFocused) 3.dp else 0.dp,
 							color = Color.White,
@@ -2422,13 +2472,35 @@ private fun JellyseerrRecentRequestCard(
 					)
 				}
 
-				val genres = details?.genres?.joinToString(", ") { it.name }.orEmpty()
-				if (genres.isNotBlank()) {
+				if (genres.isNotEmpty()) {
 					Spacer(modifier = Modifier.size(4.dp))
-					Text(
-						text = genres,
-						color = JellyfinTheme.colorScheme.onBackground,
-					)
+					Row(
+						horizontalArrangement = Arrangement.spacedBy(8.dp),
+						verticalAlignment = Alignment.CenterVertically,
+						modifier = Modifier
+							.fillMaxWidth()
+							.padding(vertical = 4.dp),
+					) {
+						genres.forEachIndexed { index, genre ->
+							Button(
+								onClick = { onGenreClick(genre) },
+								colors = ButtonDefaults.colors(
+									containerColor = Color(0xFF424242),
+									contentColor = Color.White,
+									focusedContainerColor = Color(0xFF616161),
+									focusedContentColor = Color.White,
+								),
+								contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+								modifier = if (index == 0) Modifier.focusRequester(genreButtonFocusRequester) else Modifier,
+							) {
+								Text(
+									text = genre.name,
+									maxLines = 1,
+									overflow = TextOverflow.Ellipsis,
+								)
+							}
+						}
+					}
 				}
 
 				Spacer(modifier = Modifier.size(8.dp))
@@ -2462,10 +2534,7 @@ private fun JellyseerrRecentRequestCard(
 		}
 	}
 
-	LaunchedEffect(Unit) {
-		kotlinx.coroutines.delay(100)
-		requestButtonFocusRequester.requestFocus()
-	}
+	// initial focus handled above in LaunchedEffect keyed by item.id
 }
 
 private val JellyseerrStudioCards = listOf(

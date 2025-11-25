@@ -51,6 +51,7 @@ data class JellyseerrUiState(
 	val selectedPerson: JellyseerrPersonDetails? = null,
 	val personCredits: List<JellyseerrSearchItem> = emptyList(),
 	val overlayStack: List<JellyseerrOverlayEntry> = emptyList(),
+	val discoverReturnOverlay: JellyseerrOverlayEntry? = null,
 	val trendingResults: List<JellyseerrSearchItem> = emptyList(),
 	val popularResults: List<JellyseerrSearchItem> = emptyList(),
 	val recentRequests: List<JellyseerrSearchItem> = emptyList(),
