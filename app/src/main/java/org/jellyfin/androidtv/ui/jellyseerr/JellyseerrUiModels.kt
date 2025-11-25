@@ -9,6 +9,18 @@ import org.jellyfin.androidtv.data.repository.JellyseerrPersonDetails
 import org.jellyfin.androidtv.data.repository.JellyseerrRequest
 import org.jellyfin.androidtv.data.repository.JellyseerrSearchItem
 
+sealed class JellyseerrOverlayEntry {
+	data class Detail(
+		val item: JellyseerrSearchItem,
+		val details: JellyseerrMovieDetails?,
+	) : JellyseerrOverlayEntry()
+
+	data class Person(
+		val person: JellyseerrPersonDetails,
+		val credits: List<JellyseerrSearchItem>,
+	) : JellyseerrOverlayEntry()
+}
+
 enum class JellyseerrDiscoverCategory(val titleResId: Int) {
 	TRENDING(org.jellyfin.androidtv.R.string.jellyseerr_discover_title),
 	POPULAR_MOVIES(org.jellyfin.androidtv.R.string.jellyseerr_popular_title),
@@ -38,7 +50,7 @@ data class JellyseerrUiState(
 	val discoverHasMore: Boolean = true,
 	val selectedPerson: JellyseerrPersonDetails? = null,
 	val personCredits: List<JellyseerrSearchItem> = emptyList(),
-	val originDetailItem: JellyseerrSearchItem? = null,
+	val overlayStack: List<JellyseerrOverlayEntry> = emptyList(),
 	val trendingResults: List<JellyseerrSearchItem> = emptyList(),
 	val popularResults: List<JellyseerrSearchItem> = emptyList(),
 	val recentRequests: List<JellyseerrSearchItem> = emptyList(),

@@ -154,9 +154,10 @@ private fun MainToolbar(
 					)
 					Button(
 						onClick = {
-							if (activeButton != MainToolbarActiveButton.Requests) {
-								navigationRepository.navigate(Destinations.jellyseerr)
-							}
+							navigationRepository.navigate(
+								destination = Destinations.jellyseerr,
+								replace = activeButton == MainToolbarActiveButton.Requests,
+							)
 						},
 						colors = if (activeButton == MainToolbarActiveButton.Requests) activeButtonColors else ButtonDefaults.colors(),
 						content = { Text(stringResource(R.string.jellyseerr_lbl_requests)) }

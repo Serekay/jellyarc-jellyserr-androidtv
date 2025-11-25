@@ -10,6 +10,8 @@ import org.jellyfin.androidtv.data.repository.JellyseerrRequest
 import org.jellyfin.androidtv.data.repository.JellyseerrSearchItem
 import android.content.Context
 import org.jellyfin.androidtv.R
+import org.jellyfin.androidtv.ui.jellyseerr.JellyseerrOverlayEntry.Detail
+import org.jellyfin.androidtv.ui.jellyseerr.JellyseerrOverlayEntry.Person
 
 internal class JellyseerrDetailActions(
 	private val repository: JellyseerrRepository,
@@ -19,6 +21,49 @@ internal class JellyseerrDetailActions(
 	private val context: Context,
 	private val loadRecentRequests: suspend () -> Unit,
 ) {
+	private fun currentOverlayEntry(current: JellyseerrUiState): JellyseerrOverlayEntry? = when {
+		current.selectedItem != null -> Detail(current.selectedItem, current.selectedMovie)
+		current.selectedPerson != null -> Person(current.selectedPerson, current.personCredits)
+		else -> null
+	}
+
+	private fun restorePreviousOverlay(): Boolean {
+		val current = state.value
+		val stack = current.overlayStack
+		if (stack.isEmpty()) return false
+
+		val previous = stack.last()
+		val newStack = stack.dropLast(1)
+
+		state.update {
+			when (previous) {
+				is Detail -> it.copy(
+					selectedItem = previous.item,
+					selectedMovie = previous.details,
+					selectedPerson = null,
+					personCredits = emptyList(),
+					overlayStack = newStack,
+					isLoading = false,
+					errorMessage = null,
+					requestStatusMessage = null,
+				)
+
+				is Person -> it.copy(
+					selectedItem = null,
+					selectedMovie = null,
+					selectedPerson = previous.person,
+					personCredits = previous.credits,
+					overlayStack = newStack,
+					isLoading = false,
+					errorMessage = null,
+					requestStatusMessage = null,
+				)
+			}
+		}
+
+		return true
+	}
+
 	fun loadSeasonEpisodes(tmdbId: Int, seasonNumber: Int) {
 		val key = SeasonKey(tmdbId, seasonNumber)
 		val current = state.value
@@ -105,6 +150,8 @@ internal class JellyseerrDetailActions(
 	}
 
 	fun showDetailsForItem(item: JellyseerrSearchItem) {
+		val current = state.value
+		val newStack = currentOverlayEntry(current)?.let { current.overlayStack + it } ?: emptyList()
 		state.update {
 			it.copy(
 				isLoading = true,
@@ -113,6 +160,7 @@ internal class JellyseerrDetailActions(
 				selectedMovie = null,
 				selectedPerson = null,
 				personCredits = emptyList(),
+				overlayStack = newStack,
 			)
 		}
 
@@ -149,6 +197,7 @@ internal class JellyseerrDetailActions(
 							isLoading = false,
 							selectedMovie = details,
 							selectedItem = updatedItem,
+							overlayStack = newStack,
 						)
 					}
 				}
@@ -168,6 +217,8 @@ internal class JellyseerrDetailActions(
 	}
 
 	fun showDetailsForRequest(request: JellyseerrRequest) {
+		val current = state.value
+		val newStack = currentOverlayEntry(current)?.let { current.overlayStack + it } ?: emptyList()
 		state.update {
 			it.copy(
 				isLoading = true,
@@ -176,6 +227,7 @@ internal class JellyseerrDetailActions(
 				selectedMovie = null,
 				selectedPerson = null,
 				personCredits = emptyList(),
+				overlayStack = newStack,
 			)
 		}
 
@@ -251,29 +303,32 @@ internal class JellyseerrDetailActions(
 	}
 
 	fun closeDetails() {
-		state.update {
-			it.copy(
-				selectedItem = null,
-				selectedMovie = null,
-				requestStatusMessage = null,
-			)
-		}
-		scope.launch {
-			requestActions.refreshOwnRequests()
-			loadRecentRequests()
+		if (!restorePreviousOverlay()) {
+			state.update {
+				it.copy(
+					selectedItem = null,
+					selectedMovie = null,
+					requestStatusMessage = null,
+					overlayStack = emptyList(),
+				)
+			}
+			scope.launch {
+				requestActions.refreshOwnRequests()
+				loadRecentRequests()
+			}
 		}
 	}
 
 	fun showPerson(person: JellyseerrCast) {
 		scope.launch {
 			val current = state.value
-			val origin = current.originDetailItem ?: current.selectedItem
+			val newStack = currentOverlayEntry(current)?.let { current.overlayStack + it } ?: emptyList()
 
 			state.update {
 				it.copy(
 					isLoading = true,
 					errorMessage = null,
-					originDetailItem = origin,
+					overlayStack = newStack,
 				)
 			}
 
@@ -300,6 +355,7 @@ internal class JellyseerrDetailActions(
 					personCredits = marked,
 					selectedItem = null,
 					selectedMovie = null,
+					overlayStack = newStack,
 				)
 			}
 		}
@@ -316,23 +372,12 @@ internal class JellyseerrDetailActions(
 	}
 
 	fun closePerson() {
-		val origin = state.value.originDetailItem
-
-		if (origin != null) {
+		if (!restorePreviousOverlay()) {
 			state.update {
 				it.copy(
 					selectedPerson = null,
 					personCredits = emptyList(),
-					originDetailItem = null,
-				)
-			}
-
-			showDetailsForItem(origin)
-		} else {
-			state.update {
-				it.copy(
-					selectedPerson = null,
-					personCredits = emptyList(),
+					overlayStack = emptyList(),
 				)
 			}
 			scope.launch {

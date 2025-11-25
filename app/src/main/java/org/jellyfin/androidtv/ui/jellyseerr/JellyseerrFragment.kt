@@ -285,7 +285,7 @@ private fun JellyseerrScreen(
 						JellyseerrPersonScreen(
 							person = selectedPerson,
 							credits = state.personCredits,
-							onCreditClick = { item -> viewModel.showDetailsForItem(item) },
+							onCreditClick = { item -> viewModel.showDetailsForItemFromPerson(item) },
 							focusRequesterForItem = { key -> FocusRequester() },
 							onItemFocused = { key -> viewModel.updateLastFocusedItem(key) },
 						)
@@ -2287,6 +2287,12 @@ private fun JellyseerrRecentRequestCard(
 				) {
 					Button(
 						onClick = {
+							if (isRequested && !isAvailable && !isTv) {
+								navigationRepository.navigate(
+									org.jellyfin.androidtv.ui.navigation.Destinations.search(item.title),
+								)
+								return@Button
+							}
 							when {
 								isAvailable && item.jellyfinId != null -> {
 									// Direkt zum Jellyfin Content navigieren
@@ -2317,7 +2323,7 @@ private fun JellyseerrRecentRequestCard(
 								}
 							}
 						},
-						enabled = !isRequested || isTv || isAvailable,
+						enabled = true,
 						colors = buttonColors,
 						interactionSource = requestButtonInteraction,
 						modifier = Modifier
