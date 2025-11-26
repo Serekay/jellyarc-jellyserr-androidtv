@@ -2195,6 +2195,8 @@ private fun JellyseerrDetail(
 	val isTv = item.mediaType == "tv"
 	val trailerButtonEnabled = availableTitle.isNotBlank()
 	val genres = details?.genres.orEmpty()
+	val certification = details?.certification?.takeIf { !it.isNullOrBlank() }
+	val ageValue = certification?.filter { it.isDigit() }?.takeIf { it.isNotBlank() }
 
 	Column(
 		modifier = Modifier
@@ -2465,11 +2467,41 @@ private fun JellyseerrDetail(
 					rating?.let { add(String.format("%.1f/10", it)) }
 				}
 
-				if (metaParts.isNotEmpty()) {
-					Text(
-						text = metaParts.joinToString(" • "),
-						color = JellyfinTheme.colorScheme.onBackground,
-					)
+				if (metaParts.isNotEmpty() || certification != null) {
+					Row(
+						verticalAlignment = Alignment.CenterVertically,
+						horizontalArrangement = Arrangement.spacedBy(8.dp),
+					) {
+						if (certification != null) {
+							val badgeColor = when (ageValue?.toIntOrNull()) {
+								null -> Color(0xFF616161)
+								in 0..6 -> Color(0xFF2E7D32)
+								in 7..11 -> Color(0xFFF9A825)
+								in 12..15 -> Color(0xFFEF6C00)
+								in 16..17 -> Color(0xFFC62828)
+								else -> Color(0xFF6A1B9A)
+							}
+							Box(
+								modifier = Modifier
+									.clip(RoundedCornerShape(6.dp))
+									.background(badgeColor)
+									.padding(horizontal = 8.dp, vertical = 4.dp),
+							) {
+								Text(
+									text = ageValue ?: certification,
+									color = Color.White,
+									fontSize = 12.sp,
+								)
+							}
+						}
+
+						if (metaParts.isNotEmpty()) {
+							Text(
+								text = metaParts.joinToString(" | "),
+								color = JellyfinTheme.colorScheme.onBackground,
+							)
+						}
+					}
 				}
 
 				if (genres.isNotEmpty()) {
@@ -2707,3 +2739,6 @@ private val JellyseerrNetworkCards = listOf(
 		logoUrl = "https://image.tmdb.org/t/p/w780_filter(duotone,ffffff,bababa)/gIAcGTjKKr0KOHL5s4O36roJ8p7.png",
 	),
 )
+
+
+

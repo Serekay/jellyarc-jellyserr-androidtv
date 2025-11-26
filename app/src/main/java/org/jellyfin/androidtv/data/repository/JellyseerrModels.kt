@@ -217,6 +217,7 @@ data class JellyseerrMovieDetails(
 	val firstAirDate: String? = null,
 	val runtime: Int? = null,
 	val voteAverage: Double? = null,
+	val certification: String? = null,
 	val genres: List<JellyseerrGenre> = emptyList(),
 	val credits: JellyseerrCredits? = null,
 	val seasons: List<JellyseerrSeason> = emptyList(),

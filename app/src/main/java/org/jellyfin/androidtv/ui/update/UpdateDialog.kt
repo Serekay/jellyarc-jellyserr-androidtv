@@ -1,8 +1,5 @@
 package org.jellyfin.androidtv.ui.update
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,6 +37,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.ui.base.Text
 import kotlin.math.PI
@@ -53,25 +52,30 @@ fun UpdateDialog(
 ) {
 	val state by viewModel.state.collectAsState()
 
-	AnimatedVisibility(
-		visible = state.isVisible,
-		enter = fadeIn(),
-		exit = fadeOut()
-	) {
-		Box(
-			modifier = Modifier
-				.fillMaxSize()
-				.background(Color.Black.copy(alpha = 0.7f)),
-			contentAlignment = Alignment.Center
+	if (state.isVisible) {
+		Dialog(
+			onDismissRequest = {},
+			properties = DialogProperties(
+				usePlatformDefaultWidth = false,
+				dismissOnBackPress = false,
+				dismissOnClickOutside = false,
+			),
 		) {
-			UpdateDialogContent(
-				state = state,
-				onInstall = { viewModel.startUpdate() },
-				onDismiss = {
-					viewModel.dismiss()
-					onDismiss()
-				}
-			)
+			Box(
+				modifier = Modifier
+					.fillMaxSize()
+					.background(Color.Black.copy(alpha = 0.7f)),
+				contentAlignment = Alignment.Center,
+			) {
+				UpdateDialogContent(
+					state = state,
+					onInstall = { viewModel.startUpdate() },
+					onDismiss = {
+						viewModel.dismiss()
+						onDismiss()
+					},
+				)
+			}
 		}
 	}
 }
