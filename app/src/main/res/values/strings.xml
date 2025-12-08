@@ -683,4 +683,12 @@
 	<string name="tailscale_connected_message">Tailscale VPN ist jetzt verbunden. Du kannst nun deinen Server eingeben (z.B. "pflix").</string>
 	<string name="tailscale_debug_button">Tailscale Diagnose</string>
 	<string name="tailscale_debug_title">Tailscale Status</string>
+
+	<!-- Tailscale switching flow -->
+	<string name="edit_server_address_title">Server Address</string>
+	<string name="edit_server_address_message">Enter the new address for your server (e.g. "pflix").</string>
+	<string name="connection_status_local">Local</string>
+	<string name="connection_status_vpn">VPN</string>
+	<string name="tailscale_switching_progress">Connecting…</string>
+	<string name="tailscale_connect_failed_toast">Failed to connect. Please check your Tailscale connection.</string>
 </resources>

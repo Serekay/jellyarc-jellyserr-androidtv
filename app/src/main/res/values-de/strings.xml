@@ -654,4 +654,12 @@
 	<string name="jellyseerr_search_button">In Jellyseerr suchen</string>
 	<string name="jellyseerr_search_hint">Suche auf Jellyseerr nach Filmen, Serien und Schauspielern</string>
 	<string name="jellyseerr_search_description">Nutze die Fernbedienung, um deine Suchanfrage einzugeben</string>
+
+	<!-- Tailscale switching flow -->
+	<string name="edit_server_address_title">Serveradresse</string>
+	<string name="edit_server_address_message">Gib die neue Adresse für deinen Server ein (z. B. "pflix").</string>
+	<string name="connection_status_local">Lokal</string>
+	<string name="connection_status_vpn">VPN</string>
+	<string name="tailscale_switching_progress">Verbinde…</string>
+	<string name="tailscale_connect_failed_toast">Verbindung fehlgeschlagen. Bitte prüfe deine Tailscale-Verbindung.</string>
 </resources>

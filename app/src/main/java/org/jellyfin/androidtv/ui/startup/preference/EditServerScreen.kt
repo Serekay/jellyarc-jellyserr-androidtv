@@ -1,21 +1,31 @@
 package org.jellyfin.androidtv.ui.startup.preference
 
+import android.app.ProgressDialog
+import android.content.Intent
+import android.net.VpnService
+import android.widget.EditText
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.launch
 import org.jellyfin.androidtv.R
+import org.jellyfin.androidtv.auth.model.Server
 import org.jellyfin.androidtv.auth.repository.ServerUserRepository
+import org.jellyfin.androidtv.tailscale.TailscaleManager
 import org.jellyfin.androidtv.ui.preference.dsl.OptionsFragment
 import org.jellyfin.androidtv.ui.preference.dsl.action
 import org.jellyfin.androidtv.ui.preference.dsl.checkbox
 import org.jellyfin.androidtv.ui.preference.dsl.link
 import org.jellyfin.androidtv.ui.preference.dsl.optionsScreen
 import org.jellyfin.androidtv.ui.startup.StartupViewModel
-import org.jellyfin.androidtv.tailscale.TailscaleManager
 import org.jellyfin.androidtv.util.getValue
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import kotlinx.coroutines.launch
-import android.widget.Toast
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -26,8 +36,68 @@ import java.util.UUID
 class EditServerScreen : OptionsFragment() {
 	private val startupViewModel: StartupViewModel by activityViewModel()
 	private val serverUserRepository: ServerUserRepository by inject()
+	private var isSwitching = false
+	private var progressDialog: ProgressDialog? = null
 
 	override val rebuildOnResume = true
+
+	private var vpnPermissionCallback: ((Boolean) -> Unit)? = null
+	private var currentDialog: AlertDialog? = null
+
+	private val vpnPermissionLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+		vpnPermissionCallback?.invoke(result.resultCode == android.app.Activity.RESULT_OK)
+		vpnPermissionCallback = null
+	}
+
+	private suspend fun ensureVpnPermission(): Boolean = suspendCoroutine { cont ->
+		val intent = VpnService.prepare(requireContext())
+		if (intent == null) {
+			cont.resume(true)
+			return@suspendCoroutine
+		}
+
+		vpnPermissionCallback = { granted ->
+			cont.resume(granted)
+		}
+		try {
+			vpnPermissionLauncher.launch(intent)
+		} catch (t: Throwable) {
+			vpnPermissionCallback = null
+			cont.resumeWithException(t)
+		}
+	}
+
+	private fun showProgressDialog() {
+		progressDialog = ProgressDialog.show(
+			requireContext(),
+			"",
+			getString(R.string.tailscale_switching_progress),
+			true
+		)
+	}
+	
+	private fun hideProgressDialog() {
+		progressDialog?.dismiss()
+		progressDialog = null
+	}
+
+	private fun showAddressInputDialog(server: Server, onAddressSet: (String) -> Unit) {
+		val editText = EditText(requireContext()).apply {
+			setText(server.address)
+		}
+		AlertDialog.Builder(requireContext())
+			.setTitle(R.string.edit_server_address_title)
+			.setMessage(R.string.edit_server_address_message)
+			.setView(editText)
+			.setPositiveButton(R.string.lbl_ok) { _, _ ->
+				val newAddress = editText.text.toString()
+				if (newAddress.isNotBlank()) {
+					onAddressSet(newAddress)
+				}
+			}
+			.setNegativeButton(R.string.lbl_cancel, null)
+			.show()
+	}
 
 	override val screen by optionsScreen {
 		val serverUUID = requireNotNull(
@@ -77,9 +147,82 @@ class EditServerScreen : OptionsFragment() {
 				bind {
 					get { server.tailscaleEnabled }
 					set { enabled ->
-						if (enabled != server.tailscaleEnabled) {
-							server.tailscaleEnabled = enabled
-							startupViewModel.setTailscaleEnabled(serverUUID, enabled)
+						if (isSwitching) return@set
+						isSwitching = true
+						if (enabled) {
+							// ### TAILSCALE ACTIVATION FLOW ###
+							lifecycleScope.launch {
+								try {
+									// 1. Get VPN permission
+									val permissionGranted = ensureVpnPermission()
+									if (!permissionGranted) {
+										Toast.makeText(requireContext(), "VPN permission is required.", Toast.LENGTH_LONG).show()
+										isSwitching = false
+										rebuild()
+										return@launch
+									}
+
+									// 2. Request login code
+									val codeResult = TailscaleManager.requestLoginCode()
+									if (codeResult.isFailure) {
+										throw codeResult.exceptionOrNull() ?: Exception("Failed to get login code")
+									}
+									val code = codeResult.getOrThrow()
+
+									// 3. Show code and wait for login
+									currentDialog = AlertDialog.Builder(requireContext())
+										.setTitle(R.string.tailscale_connecting_title)
+										.setMessage(getString(R.string.tailscale_connecting_message, code))
+										.setCancelable(false)
+										.show()
+
+									val loginFinished = TailscaleManager.waitUntilLoginFinished(timeoutMs = 120_000L)
+									currentDialog?.dismiss()
+
+									if (!loginFinished) {
+										throw Exception("Login timed out. Please make sure to authorize the device in your Tailscale dashboard.")
+									}
+
+									// 4. Start VPN and wait until connected
+									TailscaleManager.startVpn()
+									val vpnConnected = TailscaleManager.waitUntilConnected(timeoutMs = 60_000L)
+									if (!vpnConnected) {
+										throw Exception("VPN connection timed out after login.")
+									}
+									
+									// 5. Ask for new address
+									showAddressInputDialog(server) { newAddress ->
+										startupViewModel.setServerAddress(serverUUID, newAddress)
+										startupViewModel.setTailscaleEnabled(serverUUID, true)
+										Toast.makeText(requireContext(), "Server updated. Please restart the app.", Toast.LENGTH_LONG).show()
+										isSwitching = false
+										rebuild()
+									}
+
+								} catch (e: Exception) {
+									currentDialog?.dismiss()
+									Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+									isSwitching = false
+									rebuild()
+								}
+							}
+						} else {
+							// ### TAILSCALE DEACTIVATION FLOW ###
+							lifecycleScope.launch {
+								try {
+									showProgressDialog()
+									TailscaleManager.stopVpn()
+									hideProgressDialog()
+									showAddressInputDialog(server) { newAddress ->
+										startupViewModel.setServerAddress(serverUUID, newAddress)
+										startupViewModel.setTailscaleEnabled(serverUUID, false)
+										Toast.makeText(requireContext(), "Server updated. Please restart the app.", Toast.LENGTH_LONG).show()
+									}
+								} finally {
+									isSwitching = false
+									rebuild()
+								}
+							}
 						}
 					}
 					default { false }
@@ -160,6 +303,7 @@ class EditServerScreen : OptionsFragment() {
 			}
 		}
 	}
+
 
 	companion object {
 		const val ARG_SERVER_UUID = "server_uuid"

@@ -42,6 +42,26 @@ object TailscaleManager {
 	}
 
 	/**
+	 * Checks if the user is likely logged in to Tailscale.
+	 * This is a heuristic: if state is not NeedsLogin, we assume yes.
+	 */
+	suspend fun isLoggedIn(): Boolean = withContext(Dispatchers.IO) {
+		ensureApp().getOrNull() ?: return@withContext false
+		val state = Notifier.state.value
+		// If the state is anything other than NeedsLogin, we assume some form of authentication exists.
+		return@withContext state != Ipn.State.NeedsLogin
+	}
+
+	/**
+	 * Synchronously checks if the VPN is considered active.
+	 * @return true if the state is Running.
+	 */
+	fun isVpnActive(): Boolean {
+		return Notifier.state.value == Ipn.State.Running
+	}
+
+
+	/**
 	 * Prüft, ob Tailscale aktuell verbunden ist (State == Running)
 	 */
 	suspend fun isConnected(): Boolean = withContext(Dispatchers.IO) {

@@ -100,4 +100,8 @@ class StartupViewModel(
 	fun setTailscaleEnabled(server: UUID, enabled: Boolean) {
 		viewModelScope.launch { serverRepository.setTailscaleEnabled(server, enabled) }
 	}
+
+	fun setServerAddress(server: UUID, address: String) {
+		viewModelScope.launch { serverRepository.setServerAddress(server, address) }
+	}
 }
