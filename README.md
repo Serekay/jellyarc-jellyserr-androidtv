@@ -2,11 +2,13 @@
 
 Client-side integration that brings Jellyseerr discovery and requests into Jellyfin for Android TV. You can choose if you want to connect local or with Tailescale VPN
 
+Tested on Android Tv > 11
+
 ## Prerequisite: Server Plugin (Required)
-- Remove already installed app if you have a version < v1.1.0
+- Remove already installed app if you have a version < v1.1.2
 - Install and configure **Jellyfin Requests Bridge** on your Jellyfin server first, otherwise the Jellyseerr discovery/request features will not work.
 - Plugin repo: https://github.com/Serekay/jellyfin-requests-bridge
-
+- Android Tv >= 11
 ---
 
 ## Features

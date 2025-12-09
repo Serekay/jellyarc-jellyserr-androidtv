@@ -6,6 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -25,6 +28,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jellyfin.androidtv.BuildConfig
 import org.jellyfin.androidtv.JellyfinApplication
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.auth.model.Server
@@ -42,6 +46,8 @@ import org.jellyfin.androidtv.ui.startup.fragment.SelectServerFragment
 import org.jellyfin.androidtv.ui.startup.fragment.ServerFragment
 import org.jellyfin.androidtv.ui.startup.fragment.SplashFragment
 import org.jellyfin.androidtv.ui.startup.fragment.StartupToolbarFragment
+import org.jellyfin.androidtv.ui.update.UpdateDialog
+import org.jellyfin.androidtv.ui.update.UpdateDialogViewModel
 import org.jellyfin.androidtv.tailscale.TailscaleManager
 import org.jellyfin.androidtv.util.applyTheme
 import org.jellyfin.sdk.api.client.ApiClient
@@ -68,6 +74,7 @@ class StartupActivity : FragmentActivity() {
 	private val itemLauncher: ItemLauncher by inject()
 
 	private lateinit var binding: ActivityStartupBinding
+	private var updateDialogViewModel by mutableStateOf<UpdateDialogViewModel?>(null)
 
 	private val networkPermissionsRequester = registerForActivityResult(
 		ActivityResultContracts.RequestMultiplePermissions()
@@ -92,6 +99,30 @@ class StartupActivity : FragmentActivity() {
 		binding.background.setContent { AppBackground() }
 		binding.screensaver.isVisible = false
 		setContentView(binding.root)
+
+		// Update Dialog als Overlay hinzufügen
+		binding.root.addView(
+			androidx.compose.ui.platform.ComposeView(this).apply {
+				setContent {
+					updateDialogViewModel?.let { viewModel ->
+						UpdateDialog(
+							viewModel = viewModel,
+							onDismiss = { updateDialogViewModel = null }
+						)
+					}
+				}
+			}
+		)
+
+		// Prüfe auf Updates beim Start (auch im Einrichtungsbereich!)
+		lifecycleScope.launch {
+			val viewModel = UpdateDialogViewModel(
+				context = this@StartupActivity,
+				currentVersion = BuildConfig.VERSION_NAME
+			)
+			updateDialogViewModel = viewModel
+			viewModel.checkForUpdate(notifyIfCurrent = false)
+		}
 
 		if (!intent.getBooleanExtra(EXTRA_HIDE_SPLASH, false)) showSplash()
 

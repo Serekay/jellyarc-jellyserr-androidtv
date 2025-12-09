@@ -55,18 +55,28 @@ class EditServerScreen : OptionsFragment() {
 	}
 
 	private suspend fun ensureVpnPermission(): Boolean = suspendCoroutine { cont ->
+		if (!isAdded) {
+			cont.resume(false)
+			return@suspendCoroutine
+		}
+
 		val intent = VpnService.prepare(requireContext())
 		if (intent == null) {
+			// Berechtigung bereits erteilt
+			timber.log.Timber.d("VPN permission already granted")
 			cont.resume(true)
 			return@suspendCoroutine
 		}
 
+		timber.log.Timber.d("VPN permission needed, showing system dialog")
 		vpnPermissionCallback = { granted ->
+			timber.log.Timber.d("VPN permission result: granted=$granted")
 			cont.resume(granted)
 		}
 		try {
 			vpnPermissionLauncher.launch(intent)
 		} catch (t: Throwable) {
+			timber.log.Timber.e(t, "Failed to launch VPN permission dialog")
 			vpnPermissionCallback = null
 			cont.resumeWithException(t)
 		}
@@ -141,21 +151,39 @@ class EditServerScreen : OptionsFragment() {
 		try {
 			timber.log.Timber.d("=== VPN ACTIVATION START ===")
 
-			// Step 1: VPN Permission
+			// Step 1: VPN Permission (mit Retry-Möglichkeit)
 			updateProgressDialog(getString(R.string.tailscale_step_permission))
-			val permissionGranted = ensureVpnPermission()
-			if (!permissionGranted) {
+			var permissionGranted = ensureVpnPermission()
+
+			// Wenn nicht genehmigt, biete Retry an
+			while (!permissionGranted) {
 				hideProgressDialog()
-				AlertDialog.Builder(requireContext())
-					.setTitle(R.string.tailscale_error_title)
-					.setMessage(R.string.tailscale_vpn_permission_needed)
-					.setPositiveButton(R.string.lbl_ok, null)
-					.setOnDismissListener {
-						isSwitching = false
-						rebuild()
-					}
-					.show()
-				return
+				if (!isAdded) return
+
+				// Frage ob der User es nochmal versuchen möchte
+				val shouldRetry = suspendCoroutine<Boolean> { cont ->
+					AlertDialog.Builder(requireContext())
+						.setTitle(R.string.tailscale_error_title)
+						.setMessage(R.string.tailscale_vpn_permission_needed)
+						.setPositiveButton(R.string.tailscale_retry_button) { _, _ ->
+							cont.resume(true)
+						}
+						.setNegativeButton(R.string.lbl_cancel) { _, _ ->
+							cont.resume(false)
+						}
+						.setCancelable(false)
+						.show()
+				}
+
+				if (!shouldRetry) {
+					isSwitching = false
+					rebuild()
+					return
+				}
+
+				// Erneut versuchen
+				updateProgressDialog(getString(R.string.tailscale_step_permission))
+				permissionGranted = ensureVpnPermission()
 			}
 
 			// Step 2: Stop VPN if running (clean state)
@@ -175,27 +203,46 @@ class EditServerScreen : OptionsFragment() {
 
 			// Step 4: Show code dialog and wait for login
 			hideProgressDialog()
-			currentDialog = AlertDialog.Builder(requireContext())
-				.setTitle(R.string.tailscale_connecting_title)
-				.setMessage(getString(R.string.tailscale_connecting_message, code))
-				.setCancelable(false)
-				.show()
 
+			// Sicherer Dialog-Aufbau mit isAdded Check
+			if (!isAdded) {
+				timber.log.Timber.w("Fragment not attached, aborting VPN activation")
+				return
+			}
+
+			// Dialog auf dem Main Thread erstellen und referenzieren
+			withContext(Dispatchers.Main) {
+				if (!isAdded) return@withContext
+				currentDialog = AlertDialog.Builder(requireContext())
+					.setTitle(R.string.tailscale_connecting_title)
+					.setMessage(getString(R.string.tailscale_connecting_message, code))
+					.setCancelable(false)
+					.show()
+			}
+
+			// Warte auf Login (läuft auf IO Thread)
 			val loginFinished = TailscaleManager.waitUntilLoginFinished(timeoutMs = 120_000L)
-			currentDialog?.dismiss()
-			currentDialog = null
+
+			// Dialog sicher schließen
+			withContext(Dispatchers.Main) {
+				currentDialog?.dismiss()
+				currentDialog = null
+			}
 
 			if (!loginFinished) {
 				timber.log.Timber.w("Login timeout - user did not authorize device")
-				AlertDialog.Builder(requireContext())
-					.setTitle(R.string.tailscale_login_timeout_title)
-					.setMessage(R.string.tailscale_login_timeout_message)
-					.setPositiveButton(R.string.lbl_ok, null)
-					.setOnDismissListener {
-						isSwitching = false
-						rebuild()
-					}
-					.show()
+				withContext(Dispatchers.Main) {
+					if (!isAdded) return@withContext
+					AlertDialog.Builder(requireContext())
+						.setTitle(R.string.tailscale_login_timeout_title)
+						.setMessage(R.string.tailscale_login_timeout_message)
+						.setPositiveButton(R.string.lbl_ok, null)
+						.setOnDismissListener {
+							isSwitching = false
+							rebuild()
+						}
+						.show()
+				}
 				return
 			}
 
@@ -214,15 +261,18 @@ class EditServerScreen : OptionsFragment() {
 
 			if (!vpnConnected) {
 				timber.log.Timber.w("VPN connection timeout after successful login")
-				AlertDialog.Builder(requireContext())
-					.setTitle(R.string.tailscale_vpn_timeout_title)
-					.setMessage(R.string.tailscale_vpn_timeout_message)
-					.setPositiveButton(R.string.lbl_ok, null)
-					.setOnDismissListener {
-						isSwitching = false
-						rebuild()
-					}
-					.show()
+				withContext(Dispatchers.Main) {
+					if (!isAdded) return@withContext
+					AlertDialog.Builder(requireContext())
+						.setTitle(R.string.tailscale_vpn_timeout_title)
+						.setMessage(R.string.tailscale_vpn_timeout_message)
+						.setPositiveButton(R.string.lbl_ok, null)
+						.setOnDismissListener {
+							isSwitching = false
+							rebuild()
+						}
+						.show()
+				}
 				return
 			}
 
@@ -251,9 +301,11 @@ class EditServerScreen : OptionsFragment() {
 
 		} catch (e: Exception) {
 			timber.log.Timber.e(e, "VPN activation failed")
-			currentDialog?.dismiss()
-			currentDialog = null
-			hideProgressDialog()
+			withContext(Dispatchers.Main) {
+				currentDialog?.dismiss()
+				currentDialog = null
+				hideProgressDialog()
+			}
 
 			try {
 				TailscaleManager.stopVpn()
@@ -261,15 +313,18 @@ class EditServerScreen : OptionsFragment() {
 				timber.log.Timber.w(stopError, "Failed to stop VPN after error")
 			}
 
-			AlertDialog.Builder(requireContext())
-				.setTitle(R.string.tailscale_error_title)
-				.setMessage(getString(R.string.tailscale_error_generic, e.message))
-				.setPositiveButton(R.string.lbl_ok, null)
-				.setOnDismissListener {
-					isSwitching = false
-					rebuild()
-				}
-				.show()
+			withContext(Dispatchers.Main) {
+				if (!isAdded) return@withContext
+				AlertDialog.Builder(requireContext())
+					.setTitle(R.string.tailscale_error_title)
+					.setMessage(getString(R.string.tailscale_error_generic, e.message))
+					.setPositiveButton(R.string.lbl_ok, null)
+					.setOnDismissListener {
+						isSwitching = false
+						rebuild()
+					}
+					.show()
+			}
 		}
 	}
 
@@ -279,6 +334,13 @@ class EditServerScreen : OptionsFragment() {
 		onCancel: () -> Unit = {},
 		onAddressSet: (String) -> Unit
 	) {
+		// Sicherstellen, dass Fragment noch attached ist
+		if (!isAdded) {
+			timber.log.Timber.w("showAddressInputDialog: Fragment not attached")
+			onCancel()
+			return
+		}
+
 		// First ask: Manual, Auto, or Cancel?
 		// Button order: Negative=Manual (left), Neutral=Auto (middle), Positive=Cancel (right)
 		AlertDialog.Builder(requireContext())
