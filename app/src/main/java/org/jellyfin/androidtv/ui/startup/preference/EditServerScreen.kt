@@ -67,15 +67,23 @@ class EditServerScreen : OptionsFragment() {
 		}
 	}
 
-	private fun showProgressDialog() {
+	private fun showProgressDialog(message: String = getString(R.string.tailscale_switching_progress)) {
 		progressDialog = ProgressDialog.show(
 			requireContext(),
 			"",
-			getString(R.string.tailscale_switching_progress),
+			message,
 			true
 		)
 	}
-	
+
+	private fun updateProgressDialog(message: String) {
+		if (progressDialog == null) {
+			showProgressDialog(message)
+		} else {
+			progressDialog?.setMessage(message)
+		}
+	}
+
 	private fun hideProgressDialog() {
 		progressDialog?.dismiss()
 		progressDialog = null
@@ -126,29 +134,42 @@ class EditServerScreen : OptionsFragment() {
 
 	private suspend fun startActivationFlow(server: Server, serverUUID: UUID) {
 		try {
-			// 1. Show progress while requesting code
-			showProgressDialog()
+			timber.log.Timber.d("=== VPN ACTIVATION START ===")
 
-			// 2. Get VPN permission
+			// Step 1: VPN Permission
+			updateProgressDialog(getString(R.string.tailscale_step_permission))
 			val permissionGranted = ensureVpnPermission()
 			if (!permissionGranted) {
 				hideProgressDialog()
-				Toast.makeText(requireContext(), R.string.tailscale_vpn_permission_needed, Toast.LENGTH_LONG).show()
-				isSwitching = false
-				rebuild()
+				AlertDialog.Builder(requireContext())
+					.setTitle(R.string.tailscale_error_title)
+					.setMessage(R.string.tailscale_vpn_permission_needed)
+					.setPositiveButton(R.string.lbl_ok, null)
+					.setOnDismissListener {
+						isSwitching = false
+						rebuild()
+					}
+					.show()
 				return
 			}
 
-			// 3. Request login code
-			val codeResult = TailscaleManager.requestLoginCode()
-			hideProgressDialog()
+			// Step 2: Stop VPN if running (clean state)
+			updateProgressDialog(getString(R.string.tailscale_step_stopping_vpn))
+			TailscaleManager.stopVpn()
+			kotlinx.coroutines.delay(1000)
 
+			// Step 3: Request login code
+			updateProgressDialog(getString(R.string.tailscale_step_requesting_code))
+			val codeResult = TailscaleManager.requestLoginCode()
 			if (codeResult.isFailure) {
+				hideProgressDialog()
 				throw codeResult.exceptionOrNull() ?: Exception("Failed to get login code")
 			}
 			val code = codeResult.getOrThrow()
+			timber.log.Timber.d("Got login code: $code")
 
-			// 4. Show code and wait for login
+			// Step 4: Show code dialog and wait for login
+			hideProgressDialog()
 			currentDialog = AlertDialog.Builder(requireContext())
 				.setTitle(R.string.tailscale_connecting_title)
 				.setMessage(getString(R.string.tailscale_connecting_message, code))
@@ -160,44 +181,90 @@ class EditServerScreen : OptionsFragment() {
 			currentDialog = null
 
 			if (!loginFinished) {
-				throw Exception("Login timed out. Please make sure to authorize the device in your Tailscale dashboard.")
+				timber.log.Timber.w("Login timeout - user did not authorize device")
+				AlertDialog.Builder(requireContext())
+					.setTitle(R.string.tailscale_login_timeout_title)
+					.setMessage(R.string.tailscale_login_timeout_message)
+					.setPositiveButton(R.string.lbl_ok, null)
+					.setOnDismissListener {
+						isSwitching = false
+						rebuild()
+					}
+					.show()
+				return
 			}
 
-			// 5. Start VPN and wait until connected
-			showProgressDialog()
-			TailscaleManager.startVpn()
-			val vpnConnected = TailscaleManager.waitUntilConnected(timeoutMs = 60_000L)
+			// Step 5: Start VPN
+			updateProgressDialog(getString(R.string.tailscale_step_starting_vpn))
+			val vpnStarted = TailscaleManager.startVpn()
+			if (!vpnStarted) {
+				hideProgressDialog()
+				throw Exception("Failed to start VPN service")
+			}
+
+			// Step 6: Wait for connection
+			updateProgressDialog(getString(R.string.tailscale_step_connecting))
+			val vpnConnected = TailscaleManager.waitUntilConnected(timeoutMs = 30_000L)
 			hideProgressDialog()
 
 			if (!vpnConnected) {
-				throw Exception("VPN connection timed out after login.")
+				timber.log.Timber.w("VPN connection timeout after successful login")
+				AlertDialog.Builder(requireContext())
+					.setTitle(R.string.tailscale_vpn_timeout_title)
+					.setMessage(R.string.tailscale_vpn_timeout_message)
+					.setPositiveButton(R.string.lbl_ok, null)
+					.setOnDismissListener {
+						isSwitching = false
+						rebuild()
+					}
+					.show()
+				return
 			}
 
-			// 6. Ask for new address and validate BEFORE saving
+			timber.log.Timber.d("VPN connected successfully")
+
+			// Step 7: Ask for new server address
 			showAddressInputDialog(
 				server = server,
-				useTailscale = true,  // VPN wird aktiviert
+				useTailscale = true,
 				onCancel = {
-					// User cancelled address input
-					isSwitching = false
-					rebuild()
+					lifecycleScope.launch {
+						TailscaleManager.stopVpn()
+						isSwitching = false
+						rebuild()
+					}
 				},
 				onAddressSet = { newAddress ->
-					// Validation happens in showAddressInputDialog
-					// Only called if validation succeeds
 					startupViewModel.setServerAddress(serverUUID, newAddress)
 					startupViewModel.setTailscaleEnabled(serverUUID, true)
 					isSwitching = false
 					showRestartDialog()
-				})
+				}
+			)
+
+			timber.log.Timber.d("=== VPN ACTIVATION END ===")
 
 		} catch (e: Exception) {
+			timber.log.Timber.e(e, "VPN activation failed")
 			currentDialog?.dismiss()
 			currentDialog = null
 			hideProgressDialog()
-			Toast.makeText(requireContext(), getString(R.string.tailscale_error_generic, e.message), Toast.LENGTH_LONG).show()
-			isSwitching = false
-			rebuild()
+
+			try {
+				TailscaleManager.stopVpn()
+			} catch (stopError: Exception) {
+				timber.log.Timber.w(stopError, "Failed to stop VPN after error")
+			}
+
+			AlertDialog.Builder(requireContext())
+				.setTitle(R.string.tailscale_error_title)
+				.setMessage(getString(R.string.tailscale_error_generic, e.message))
+				.setPositiveButton(R.string.lbl_ok, null)
+				.setOnDismissListener {
+					isSwitching = false
+					rebuild()
+				}
+				.show()
 		}
 	}
 
@@ -319,53 +386,57 @@ class EditServerScreen : OptionsFragment() {
 						isSwitching = true
 						if (enabled) {
 							// ### TAILSCALE ACTIVATION FLOW ###
-							// Show info that device should be removed from dashboard first, then continue
-							timber.log.Timber.d("Tailscale activation requested - showing dashboard removal info")
-							AlertDialog.Builder(requireContext())
-								.setTitle(R.string.tailscale_already_logged_in_title)
-								.setMessage(R.string.tailscale_already_logged_in_message)
-								.setPositiveButton(R.string.lbl_ok) { _, _ ->
-									// User acknowledged - now start the VPN activation flow
-									lifecycleScope.launch {
-										startActivationFlow(server, serverUUID)
-									}
-								}
-								.setNegativeButton(R.string.lbl_cancel) { _, _ ->
-									isSwitching = false
-									rebuild()
-								}
-								.setCancelable(false)
-								.show()
+							timber.log.Timber.d("Tailscale activation requested")
+							lifecycleScope.launch {
+								startActivationFlow(server, serverUUID)
+							}
 						} else {
 							// ### TAILSCALE DEACTIVATION FLOW ###
+							timber.log.Timber.d("Tailscale deactivation requested")
 							lifecycleScope.launch {
 								try {
-									showProgressDialog()
+									// Step 1: Stop VPN
+									updateProgressDialog(getString(R.string.tailscale_step_stopping_vpn))
 									TailscaleManager.stopVpn()
+									kotlinx.coroutines.delay(500) // Brief pause
 									hideProgressDialog()
 
-									// Ask for new address and validate BEFORE saving
+									// Step 2: Ask for new local address
 									showAddressInputDialog(
 										server = server,
-										useTailscale = false,  // VPN wird deaktiviert
+										useTailscale = false,
 										onCancel = {
-											// User cancelled address input
-											isSwitching = false
-											rebuild()
+											// User cancelled - re-enable VPN
+											lifecycleScope.launch {
+												try {
+													TailscaleManager.startVpn()
+												} catch (e: Exception) {
+													timber.log.Timber.w(e, "Failed to restart VPN after cancel")
+												}
+												isSwitching = false
+												rebuild()
+											}
 										},
 										onAddressSet = { newAddress ->
-											// Validation happens in showAddressInputDialog
-											// Only called if validation succeeds
+											// Success - save settings
 											startupViewModel.setServerAddress(serverUUID, newAddress)
 											startupViewModel.setTailscaleEnabled(serverUUID, false)
 											isSwitching = false
 											showRestartDialog()
-										})
+										}
+									)
 								} catch (e: Exception) {
+									timber.log.Timber.e(e, "VPN deactivation failed")
 									hideProgressDialog()
-									Toast.makeText(requireContext(), getString(R.string.tailscale_error_generic, e.message), Toast.LENGTH_LONG).show()
-									isSwitching = false
-									rebuild()
+									AlertDialog.Builder(requireContext())
+										.setTitle(R.string.tailscale_error_title)
+										.setMessage(getString(R.string.tailscale_error_generic, e.message))
+										.setPositiveButton(R.string.lbl_ok, null)
+										.setOnDismissListener {
+											isSwitching = false
+											rebuild()
+										}
+										.show()
 								}
 							}
 						}

@@ -177,133 +177,111 @@ class ServerAddFragment : Fragment() {
 	}
 
 	/**
-	 * Tailscale-Flow - zeigt Info dass Gerät aus Dashboard entfernt werden sollte, dann Flow starten
+	 * Tailscale VPN activation flow with login code
 	 */
 	private fun startTailscaleFlow() {
-		Timber.d("Tailscale VPN requested - showing dashboard removal info")
-		// Show info that device should be removed from dashboard first, then continue
-		AlertDialog.Builder(requireContext())
-			.setTitle(R.string.tailscale_already_logged_in_title)
-			.setMessage(R.string.tailscale_already_logged_in_message)
-			.setPositiveButton(R.string.lbl_ok) { _, _ ->
-				// User acknowledged - now start the actual VPN flow
-				continueWithTailscaleFlow()
-			}
-			.setNegativeButton(R.string.lbl_cancel) { _, _ ->
-				setButtonsEnabled(true)
-			}
-			.setCancelable(false)
-			.show()
-	}
-
-	/**
-	 * Führt den eigentlichen Tailscale-Flow aus (VPN Permission, Login-Code, Warten, VPN-Start)
-	 */
-	private fun continueWithTailscaleFlow() {
+		Timber.d("=== VPN ACTIVATION START (ServerAddFragment) ===")
 		viewLifecycleOwner.lifecycleScope.launch {
 			try {
-				Timber.d("=== TAILSCALE FLOW START ===")
-
-				// 1. VPN-Permission sicherstellen
+				// Step 1: VPN Permission
+				binding.error.text = getString(R.string.tailscale_step_permission)
 				val permissionGranted = ensureVpnPermission()
 				if (!permissionGranted) {
-					Timber.w("VPN permission not granted by user")
+					Timber.w("VPN permission not granted")
 					setButtonsEnabled(true)
-					Toast.makeText(requireContext(), R.string.tailscale_vpn_permission_needed, Toast.LENGTH_LONG).show()
-					return@launch
-				}
-
-				// 2. Login-Code anfordern
-				Timber.d("Step 1: Requesting login code...")
-				val codeResult = TailscaleManager.requestLoginCode()
-				if (codeResult.isFailure) {
-					Timber.e(codeResult.exceptionOrNull(), "Failed to request login code")
-					setButtonsEnabled(true)
+					binding.error.text = ""
 					AlertDialog.Builder(requireContext())
 						.setTitle(R.string.tailscale_error_title)
-						.setMessage(getString(R.string.tailscale_login_code_failed, codeResult.exceptionOrNull()?.message))
+						.setMessage(R.string.tailscale_vpn_permission_needed)
 						.setPositiveButton(R.string.lbl_ok, null)
 						.show()
 					return@launch
 				}
 
-				val code = codeResult.getOrThrow()
-				Timber.d("Step 1: Got login code: $code")
+				// Step 2: Stop VPN if running (clean state)
+				binding.error.text = getString(R.string.tailscale_step_stopping_vpn)
+				TailscaleManager.stopVpn()
+				kotlinx.coroutines.delay(1000)
 
-				// 3. Dialog mit Code
-				Timber.d("Step 2: Showing dialog with code")
+				// Step 3: Request login code
+				binding.error.text = getString(R.string.tailscale_step_requesting_code)
+				val codeResult = TailscaleManager.requestLoginCode()
+				if (codeResult.isFailure) {
+					binding.error.text = ""
+					throw codeResult.exceptionOrNull() ?: Exception("Failed to get login code")
+				}
+				val code = codeResult.getOrThrow()
+				Timber.d("Got login code: $code")
+
+				// Step 4: Show code dialog and wait for login
+				binding.error.text = ""
 				currentDialog = AlertDialog.Builder(requireContext())
 					.setTitle(R.string.tailscale_connecting_title)
 					.setMessage(getString(R.string.tailscale_connecting_message, code))
 					.setCancelable(false)
 					.show()
 
-				// 4. Warte auf loginFinished Event
-				Timber.d("Step 3: Waiting for loginFinished event (max 120 seconds)...")
 				val loginFinished = TailscaleManager.waitUntilLoginFinished(timeoutMs = 120_000L)
-
 				currentDialog?.dismiss()
 				currentDialog = null
 
-				if (loginFinished) {
-					Timber.d("Step 4: Login finished successfully!")
-
-					// 5. VPN starten
-					Timber.d("Step 4: Starting VPN after successful login...")
-					val vpnStarted = TailscaleManager.startVpn()
-					if (!vpnStarted) {
-						Timber.w("VPN start failed - permission needed")
-						setButtonsEnabled(true)
-						Toast.makeText(requireContext(), R.string.tailscale_vpn_permission_required, Toast.LENGTH_LONG).show()
-						return@launch
-					}
-
-					// 6. Warte bis VPN verbunden ist
-					Timber.d("Step 5: Waiting for VPN to connect...")
-					val vpnConnected = TailscaleManager.waitUntilConnected(timeoutMs = 60_000L)
-
-					if (vpnConnected) {
-						Timber.d("Step 5: VPN connected successfully!")
-						AlertDialog.Builder(requireContext())
-							.setTitle(R.string.tailscale_connected_title)
-							.setMessage(R.string.tailscale_connected_message)
-							.setPositiveButton(R.string.lbl_ok) { dialog, _ ->
-								dialog.dismiss()
-								showAddressInput()
-							}
-							.show()
-					} else {
-						Timber.e("Step 5: VPN connection timeout!")
-						setButtonsEnabled(true)
-						AlertDialog.Builder(requireContext())
-							.setTitle(R.string.tailscale_vpn_timeout_title)
-							.setMessage(R.string.tailscale_vpn_timeout_message)
-							.setPositiveButton(R.string.lbl_ok) { _, _ ->
-								setButtonsEnabled(true)
-							}
-							.show()
-					}
-				} else {
-					Timber.e("Step 4: TIMEOUT - loginFinished event never received")
+				if (!loginFinished) {
+					Timber.w("Login timeout - user did not authorize device")
 					setButtonsEnabled(true)
 					AlertDialog.Builder(requireContext())
 						.setTitle(R.string.tailscale_login_timeout_title)
 						.setMessage(R.string.tailscale_login_timeout_message)
-						.setPositiveButton(R.string.tailscale_retry_button) { _, _ ->
-							setButtonsEnabled(true)
-						}
-						.setNegativeButton(R.string.lbl_cancel) { _, _ ->
-							setButtonsEnabled(true)
-						}
+						.setPositiveButton(R.string.lbl_ok, null)
 						.show()
+					return@launch
 				}
 
-				Timber.d("=== TAILSCALE FLOW END ===")
+				// Step 5: Start VPN
+				binding.error.text = getString(R.string.tailscale_step_starting_vpn)
+				val vpnStarted = TailscaleManager.startVpn()
+				if (!vpnStarted) {
+					binding.error.text = ""
+					throw Exception("Failed to start VPN service")
+				}
+
+				// Step 6: Wait for connection
+				binding.error.text = getString(R.string.tailscale_step_connecting)
+				val vpnConnected = TailscaleManager.waitUntilConnected(timeoutMs = 30_000L)
+				binding.error.text = ""
+
+				if (!vpnConnected) {
+					Timber.w("VPN connection timeout after successful login")
+					setButtonsEnabled(true)
+					AlertDialog.Builder(requireContext())
+						.setTitle(R.string.tailscale_vpn_timeout_title)
+						.setMessage(R.string.tailscale_vpn_timeout_message)
+						.setPositiveButton(R.string.lbl_ok, null)
+						.show()
+					return@launch
+				}
+
+				Timber.d("VPN connected successfully - showing address input")
+				showAddressInput()
+				Timber.d("=== VPN ACTIVATION END ===")
+
 			} catch (e: Exception) {
-				Timber.e(e, "Tailscale flow continuation failed with exception")
+				Timber.e(e, "VPN activation failed")
 				currentDialog?.dismiss()
+				currentDialog = null
+				binding.error.text = ""
 				setButtonsEnabled(true)
-				Toast.makeText(requireContext(), getString(R.string.tailscale_error_generic, e.message), Toast.LENGTH_LONG).show()
+
+				try {
+					TailscaleManager.stopVpn()
+				} catch (stopError: Exception) {
+					Timber.w(stopError, "Failed to stop VPN after error")
+				}
+
+				AlertDialog.Builder(requireContext())
+					.setTitle(R.string.tailscale_error_title)
+					.setMessage(getString(R.string.tailscale_error_generic, e.message))
+					.setPositiveButton(R.string.lbl_ok, null)
+					.show()
 			}
 		}
 	}

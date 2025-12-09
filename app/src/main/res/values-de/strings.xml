@@ -677,8 +677,17 @@
 	<string name="tailscale_already_logged_in_title">Wichtig: Gerät zuerst entfernen</string>
 	<string name="tailscale_already_logged_in_message">Für beste Ergebnisse, entferne bitte dieses Gerät zuerst aus deinem Tailscale Dashboard:\n\n1. Öffne dein Tailscale Dashboard\n2. Finde und entferne dieses Gerät aus der Liste\n3. Klicke OK um mit der Aktivierung fortzufahren\n\nDies stellt eine saubere Verbindung sicher.</string>
 
+	<!-- Tailscale Progress Steps -->
+	<string name="tailscale_step_permission">Prüfe VPN-Berechtigung…</string>
+	<string name="tailscale_step_stopping_vpn">Stoppe VPN-Verbindung…</string>
+	<string name="tailscale_step_requesting_code">Fordere Login-Code an…</string>
+	<string name="tailscale_step_starting_vpn">Starte VPN-Verbindung…</string>
+	<string name="tailscale_step_connecting">Verbinde mit VPN…</string>
+
 	<!-- Tailscale Error Messages -->
 	<string name="tailscale_error_title">Fehler</string>
+	<string name="tailscale_auth_required_title">Authentifizierung erforderlich</string>
+	<string name="tailscale_auth_required_message">VPN konnte nicht verbunden werden.\n\nBitte öffne die Tailscale App, melde dich an und versuche es erneut.\n\nFalls das Gerät bereits im Dashboard vorhanden ist, entferne es zuerst und versuche es erneut.</string>
 	<string name="tailscale_login_code_failed">Login-Code konnte nicht angefordert werden:\n\n%1$s</string>
 	<string name="tailscale_vpn_timeout_title">VPN Timeout</string>
 	<string name="tailscale_vpn_timeout_message">Tailscale Login war erfolgreich, aber VPN konnte nicht verbunden werden.\n\nPrüfe die Diagnose oder probiere es erneut.</string>

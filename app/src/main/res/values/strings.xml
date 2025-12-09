@@ -706,8 +706,17 @@
 	<string name="tailscale_already_logged_in_title">Important: Remove Device First</string>
 	<string name="tailscale_already_logged_in_message">For the best results, please remove this device from your Tailscale Dashboard first:\n\n1. Open your Tailscale Dashboard\n2. Find and remove this device from the list\n3. Click OK to continue with the activation\n\nThis ensures a clean connection setup.</string>
 
+	<!-- Tailscale Progress Steps -->
+	<string name="tailscale_step_permission">Checking VPN permission…</string>
+	<string name="tailscale_step_stopping_vpn">Stopping VPN connection…</string>
+	<string name="tailscale_step_requesting_code">Requesting login code…</string>
+	<string name="tailscale_step_starting_vpn">Starting VPN connection…</string>
+	<string name="tailscale_step_connecting">Connecting to VPN…</string>
+
 	<!-- Tailscale Error Messages -->
 	<string name="tailscale_error_title">Error</string>
+	<string name="tailscale_auth_required_title">Authentication Required</string>
+	<string name="tailscale_auth_required_message">VPN could not connect.\n\nPlease open the Tailscale app, sign in, and try again.\n\nIf the device already exists in your dashboard, remove it first and try again.</string>
 	<string name="tailscale_login_code_failed">Failed to request login code:\n\n%1$s</string>
 	<string name="tailscale_vpn_timeout_title">VPN Timeout</string>
 	<string name="tailscale_vpn_timeout_message">Tailscale login was successful, but VPN could not connect.\n\nCheck diagnostics or try again.</string>
