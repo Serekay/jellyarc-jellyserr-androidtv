@@ -21,6 +21,7 @@ import org.json.JSONObject
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.auth.model.Server
 import org.jellyfin.androidtv.auth.repository.ServerUserRepository
+import org.jellyfin.androidtv.tailscale.LoginCodeTimeoutException
 import org.jellyfin.androidtv.tailscale.TailscaleManager
 import org.jellyfin.androidtv.ui.preference.dsl.OptionsFragment
 import org.jellyfin.androidtv.ui.preference.dsl.action
@@ -148,6 +149,12 @@ class EditServerScreen : OptionsFragment() {
 	}
 
 	private suspend fun startActivationFlow(server: Server, serverUUID: UUID) {
+		// Speichere Activity-Referenz am Anfang, da isAdded später false sein kann
+		val activityRef = activity ?: run {
+			timber.log.Timber.e("startActivationFlow: No activity available")
+			return
+		}
+
 		try {
 			timber.log.Timber.d("=== VPN ACTIVATION START ===")
 
@@ -221,7 +228,9 @@ class EditServerScreen : OptionsFragment() {
 			}
 
 			// Warte auf Login (läuft auf IO Thread)
+			timber.log.Timber.d("Waiting for login to finish...")
 			val loginFinished = TailscaleManager.waitUntilLoginFinished(timeoutMs = 120_000L)
+			timber.log.Timber.d("waitUntilLoginFinished returned: $loginFinished")
 
 			// Dialog sicher schließen
 			withContext(Dispatchers.Main) {
@@ -230,7 +239,7 @@ class EditServerScreen : OptionsFragment() {
 			}
 
 			if (!loginFinished) {
-				timber.log.Timber.w("Login timeout - user did not authorize device")
+				timber.log.Timber.w("Login timeout - user did not authorize device, isAdded=$isAdded")
 				withContext(Dispatchers.Main) {
 					if (!isAdded) return@withContext
 					AlertDialog.Builder(requireContext())
@@ -276,26 +285,50 @@ class EditServerScreen : OptionsFragment() {
 				return
 			}
 
-			timber.log.Timber.d("VPN connected successfully")
+			timber.log.Timber.d("VPN connected successfully, showing success dialog")
 
-			// Step 7: Ask for new server address
-			showAddressInputDialog(
-				server = server,
-				useTailscale = true,
-				onCancel = {
-					lifecycleScope.launch {
-						TailscaleManager.stopVpn()
-						isSwitching = false
-						rebuild()
+			// Step 7: Show success message before asking for address
+			// Zeige Success-Dialog und warte auf OK, dann zeige Address-Input
+			withContext(Dispatchers.Main) {
+				timber.log.Timber.d("Step 7: isAdded=$isAdded, activityRef=$activityRef")
+
+				// Zeige Success Toast (wird immer angezeigt)
+				Toast.makeText(
+					activityRef,
+					R.string.tailscale_auth_success_title,
+					Toast.LENGTH_LONG
+				).show()
+
+				// Zeige Success-Dialog, dann Address-Input
+				AlertDialog.Builder(activityRef)
+					.setTitle(R.string.tailscale_auth_success_title)
+					.setMessage(R.string.tailscale_auth_success_message)
+					.setPositiveButton(R.string.lbl_ok) { _, _ ->
+						timber.log.Timber.d("Success dialog OK clicked, showing address input")
+						// Step 8: Nach OK -> Address Input Dialog zeigen
+						showAddressInputDialogWithContext(
+							activityRef,
+							server = server,
+							useTailscale = true,
+							onCancel = {
+								lifecycleScope.launch {
+									TailscaleManager.stopVpn()
+									isSwitching = false
+									rebuild()
+								}
+							},
+							onAddressSet = { newAddress ->
+								startupViewModel.setServerAddress(serverUUID, newAddress)
+								startupViewModel.setTailscaleEnabled(serverUUID, true)
+								isSwitching = false
+								showRestartDialog()
+							}
+						)
 					}
-				},
-				onAddressSet = { newAddress ->
-					startupViewModel.setServerAddress(serverUUID, newAddress)
-					startupViewModel.setTailscaleEnabled(serverUUID, true)
-					isSwitching = false
-					showRestartDialog()
-				}
-			)
+					.setCancelable(false)
+					.show()
+				timber.log.Timber.d("Success dialog shown")
+			}
 
 			timber.log.Timber.d("=== VPN ACTIVATION END ===")
 
@@ -315,9 +348,27 @@ class EditServerScreen : OptionsFragment() {
 
 			withContext(Dispatchers.Main) {
 				if (!isAdded) return@withContext
+
+				// Spezielle Behandlung für Login-Code Timeout (Android TV Bug)
+				val (title, message) = when (e) {
+					is LoginCodeTimeoutException -> {
+						timber.log.Timber.w("Login code timeout - TV restart likely required")
+						Pair(
+							R.string.tailscale_login_code_timeout_title,
+							getString(R.string.tailscale_login_code_timeout_message)
+						)
+					}
+					else -> {
+						Pair(
+							R.string.tailscale_error_title,
+							getString(R.string.tailscale_error_generic, e.message)
+						)
+					}
+				}
+
 				AlertDialog.Builder(requireContext())
-					.setTitle(R.string.tailscale_error_title)
-					.setMessage(getString(R.string.tailscale_error_generic, e.message))
+					.setTitle(title)
+					.setMessage(message)
 					.setPositiveButton(R.string.lbl_ok, null)
 					.setOnDismissListener {
 						isSwitching = false
@@ -341,14 +392,24 @@ class EditServerScreen : OptionsFragment() {
 			return
 		}
 
+		showAddressInputDialogWithContext(requireContext(), server, useTailscale, onCancel, onAddressSet)
+	}
+
+	private fun showAddressInputDialogWithContext(
+		ctx: android.content.Context,
+		server: Server,
+		useTailscale: Boolean = server.tailscaleEnabled,
+		onCancel: () -> Unit = {},
+		onAddressSet: (String) -> Unit
+	) {
 		// First ask: Manual, Auto, or Cancel?
 		// Button order: Negative=Manual (left), Neutral=Auto (middle), Positive=Cancel (right)
-		AlertDialog.Builder(requireContext())
+		AlertDialog.Builder(ctx)
 			.setTitle(R.string.server_address_selection_title)
 			.setMessage(R.string.server_address_selection_message)
 			.setNegativeButton(R.string.server_address_manual) { _, _ ->
 				// MANUAL: Show input dialog
-				showManualAddressInputDialog(onCancel, onAddressSet)
+				showManualAddressInputDialogWithContext(ctx, onCancel, onAddressSet)
 			}
 			.setNeutralButton(R.string.server_address_auto) { _, _ ->
 				// AUTO: Fetch from plugin
@@ -369,10 +430,18 @@ class EditServerScreen : OptionsFragment() {
 		onCancel: () -> Unit,
 		onAddressSet: (String) -> Unit
 	) {
-		val editText = EditText(requireContext()).apply {
-			hint = getString(R.string.edit_server_address_hint)
+		showManualAddressInputDialogWithContext(requireContext(), onCancel, onAddressSet)
+	}
+
+	private fun showManualAddressInputDialogWithContext(
+		ctx: android.content.Context,
+		onCancel: () -> Unit,
+		onAddressSet: (String) -> Unit
+	) {
+		val editText = EditText(ctx).apply {
+			hint = ctx.getString(R.string.edit_server_address_hint)
 		}
-		val dialog = AlertDialog.Builder(requireContext())
+		val dialog = AlertDialog.Builder(ctx)
 			.setTitle(R.string.edit_server_address_title)
 			.setMessage(R.string.edit_server_address_message)
 			.setView(editText)
@@ -390,7 +459,7 @@ class EditServerScreen : OptionsFragment() {
 			positiveButton.setOnClickListener {
 				val newAddress = editText.text.toString().trim()
 				if (newAddress.isBlank()) {
-					editText.error = getString(R.string.server_field_empty)
+					editText.error = ctx.getString(R.string.server_field_empty)
 					return@setOnClickListener
 				}
 
@@ -412,7 +481,7 @@ class EditServerScreen : OptionsFragment() {
 						onAddressSet(addressToTest)
 						dialog.dismiss()
 					} else {
-						AlertDialog.Builder(requireContext())
+						AlertDialog.Builder(ctx)
 							.setTitle(R.string.server_connection_failed_title)
 							.setMessage(R.string.server_connection_failed_message)
 							.setPositiveButton(R.string.lbl_ok) { _, _ -> }
@@ -639,12 +708,33 @@ class EditServerScreen : OptionsFragment() {
 				setContent(R.string.lbl_remove_users)
 				icon = R.drawable.ic_delete
 				onActivate = {
-					startupViewModel.deleteServer(serverUUID)
-
-					parentFragmentManager.popBackStack()
+					showRemoveServerConfirmation(serverUUID)
 				}
 			}
 		}
+	}
+
+	private fun showRemoveServerConfirmation(serverUUID: UUID) {
+		AlertDialog.Builder(requireContext())
+			.setTitle(R.string.remove_server_confirm_title)
+			.setMessage(R.string.remove_server_confirm_message)
+			.setPositiveButton(R.string.lbl_remove) { _, _ ->
+				// Delete server and restart app
+				startupViewModel.deleteServer(serverUUID)
+				restartApp()
+			}
+			.setNegativeButton(R.string.btn_cancel, null)
+			.show()
+	}
+
+	private fun restartApp() {
+		val context = requireActivity()
+		val packageManager = context.packageManager
+		val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+		val componentName = intent!!.component
+		val mainIntent = Intent.makeRestartActivityTask(componentName)
+		context.startActivity(mainIntent)
+		Runtime.getRuntime().exit(0)
 	}
 
 

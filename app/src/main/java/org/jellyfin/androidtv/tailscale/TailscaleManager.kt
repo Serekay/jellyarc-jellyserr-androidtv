@@ -351,7 +351,7 @@ object TailscaleManager {
 		val loginUrl = loginUrlDeferred.await()
 		if (loginUrl == null) {
 			Timber.e("Timeout waiting for login URL from Notifier.browseToURL")
-			return@withContext Result.failure(IllegalStateException("Timeout: kein Login-Code vom Backend erhalten"))
+			return@withContext Result.failure(LoginCodeTimeoutException())
 		}
 
 		Timber.d("requestLoginCode: received login URL: $loginUrl")
@@ -360,7 +360,7 @@ object TailscaleManager {
 		val code = extractCodeFromUrl(loginUrl)
 		if (code.isEmpty()) {
 			Timber.e("Could not extract code from login URL: $loginUrl")
-			return@withContext Result.failure(IllegalStateException("Kein Code in Login-URL gefunden: $loginUrl"))
+			return@withContext Result.failure(IllegalStateException("No Code in Login-URL gefunden: $loginUrl"))
 		}
 
 		Timber.d("requestLoginCode: extracted code: $code")
@@ -605,3 +605,8 @@ object TailscaleManager {
 	}
 
 }
+
+/**
+ * Exception für Login-Code Timeout (Android TV Bug - TV muss neugestartet werden)
+ */
+class LoginCodeTimeoutException : Exception("Login code timeout - TV restart required")

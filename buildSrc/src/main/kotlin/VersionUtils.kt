@@ -3,7 +3,7 @@ import org.gradle.api.Project
 /**
  * Single-source version name. Edit the fallback here and it will be used everywhere.
  */
-fun Project.getVersionName(fallback: String = "1.1.3"): String = fallback
+fun Project.getVersionName(fallback: String = "1.1.4"): String = fallback
 
 /**
  * Get the version code for a given semantic version.

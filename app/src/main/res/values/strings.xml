@@ -711,6 +711,10 @@
 	<string name="restart_required_message">The app needs to restart for the changes to take effect.</string>
 	<string name="restart_now">Restart Now</string>
 
+	<!-- Remove Server Confirmation -->
+	<string name="remove_server_confirm_title">Remove Server?</string>
+	<string name="remove_server_confirm_message">Are you sure you want to remove this server?\n\nThis will also remove all associated accounts. The app will restart after removal.</string>
+
 	<!-- Tailscale Already Logged In Dialog -->
 	<string name="tailscale_already_logged_in_title">Important: Remove Device First</string>
 	<string name="tailscale_already_logged_in_message">For the best results, please remove this device from your Tailscale Dashboard first:\n\n1. Open your Tailscale Dashboard\n2. Find and remove this device from the list\n3. Click OK to continue with the activation\n\nThis ensures a clean connection setup.</string>
@@ -727,11 +731,15 @@
 	<string name="tailscale_auth_required_title">Authentication Required</string>
 	<string name="tailscale_auth_required_message">VPN could not connect.\n\nPlease open the Tailscale app, sign in, and try again.\n\nIf the device already exists in your dashboard, remove it first and try again.</string>
 	<string name="tailscale_login_code_failed">Failed to request login code:\n\n%1$s</string>
+	<string name="tailscale_login_code_timeout_title">Login Code Timeout</string>
+	<string name="tailscale_login_code_timeout_message">No login code received from Tailscale.\n\nThis can be caused by Android TV bugs. Please try:\n\n1. Restart your TV completely\n2. Open the app again\n3. Try VPN setup again</string>
 	<string name="tailscale_vpn_timeout_title">VPN Timeout</string>
-	<string name="tailscale_vpn_timeout_message">Tailscale login was successful, but VPN could not connect.\n\nCheck diagnostics or try again.</string>
+	<string name="tailscale_vpn_timeout_message">Tailscale login was successful, but VPN could not connect.\n\nThis can be caused by Android TV bugs. Please try:\n\n1. Restart your TV completely\n2. Open the app again\n3. Try VPN setup again\n\nIf the problem persists, check your Tailscale Dashboard.</string>
 	<string name="tailscale_login_timeout_title">Login Timeout</string>
-	<string name="tailscale_login_timeout_message">Login could not be completed.\n\nWas the device authorized in the Tailscale Dashboard?\n\nPlease check:\n- Dashboard → Machines → Approve device</string>
+	<string name="tailscale_login_timeout_message">Login could not be completed.\n\nThis can be caused by Android TV bugs. Please try:\n\n1. Restart your TV completely\n2. Open the app again\n3. Try VPN setup again\n\nAlso check if the device was authorized in the Tailscale Dashboard.</string>
 	<string name="tailscale_retry_button">Try Again</string>
+	<string name="tailscale_auth_success_title">Authentication Successful</string>
+	<string name="tailscale_auth_success_message">Tailscale VPN has been successfully connected!\n\nYou can now enter your server address for VPN access.</string>
 	<string name="tailscale_vpn_permission_required">VPN permission required. Please allow and try again.</string>
 	<string name="tailscale_vpn_permission_needed">VPN permission required.</string>
 	<string name="tailscale_error_generic">Error: %1$s</string>
