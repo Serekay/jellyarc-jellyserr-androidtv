@@ -2,6 +2,14 @@
 
 Client-side integration that brings Jellyseerr discovery and requests into Jellyfin for Android TV. You can choose if you want to connect local or with Tailescale VPN
 
+## Download
+
+**[Download the latest APK](https://serekay.github.io/jellyarc/)**
+
+Or download directly from [GitHub Releases](https://github.com/Serekay/jellyarc/releases)
+
+---
+
 Tested on Android Tv > 11
 
 ## Prerequisite: Server Plugin (Required)
