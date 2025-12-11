@@ -10,8 +10,8 @@ Jellyarc lets you browse the Jellyseerr discovery catalog and request new conten
 
 ## Requirements
 
-- Android TV 11 or newer
-- Jellyfin server with [Requests Bridge Plugin](https://github.com/Serekay/jellyfin-requests-bridge) installed
+- Android TV 11 or newer (Anrdoird TV < 11 maybe alsow work)
+- Jellyfin server with [Requests Bridge Plugin](https://github.com/Serekay/jellyfin-requests-bridge) installed and configured.
 - Optional: Tailscale account for remote access
 
 ---
@@ -20,11 +20,11 @@ Jellyarc lets you browse the Jellyseerr discovery catalog and request new conten
 
 ### On your TV (easiest)
 
-1. Install a browser on your TV (e.g. **BrowseHere** from Play Store)
-2. Open the browser and go to: **serekay.github.io/jellyarc**
+1. Install a browser on your TV (e.g. **BrowseHere** or **Downloader** from Play Store)
+2. Open the browser and go to: **https://serekay.github.io/jellyarc**
 3. The APK download starts automatically
 4. Open the downloaded APK and install
-5. If prompted, enable "Unknown sources" for the browser app
+5. If prompted, enable "Unknown sources" for the browser app, maybe you need do open the Donwloader app again.
 
 ### From your PC
 
