@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jellyarc - Modern TV Client</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        :root {
+            --bg-dark: #0f172a;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --accent-color: #818cf8; /* Modernes Indigo */
+            --accent-hover: #6366f1;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* Hero Section */
+        header {
+            padding: 80px 0 40px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 0 0 20px 0;
+            background: linear-gradient(to right, #fff, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Dynamic Download Button */
+        .cta-container {
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn.loading {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .version-info {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+            text-align: left;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        h3 { margin: 0 0 10px 0; font-size: 1.4rem; color: #fff; }
+        p { margin: 0; color: var(--text-muted); font-size: 1rem; }
+
+        /* Footer */
+        footer {
+            margin-top: 80px;
+            padding: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        footer a { color: var(--text-muted); text-decoration: none; border-bottom: 1px dotted var(--text-muted); }
+        footer a:hover { color: #fff; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.8rem; }
+            .btn { width: 100%; justify-content: center; box-sizing: border-box; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <span class="badge">Open Source Project</span>
+            <h1>Jellyarc</h1>
+            <p class="subtitle">Der minimalistische, schnelle Client für deinen Jellyfin Server. Optimiert für TV und Fernbedienung.</p>
+        </header>
+
+        <div class="cta-container">
+            <a href="https://github.com/Serekay/jellyarc/releases" id="download-btn" class="btn loading">
+                <span>⚡</span> Läade neueste Version...
+            </a>
+            <div class="version-info" id="version-text">Sucht nach Releases auf GitHub...</div>
+        </div>
+
+        <div class="features">
+            <div class="card">
+                <div class="card-icon">📺</div>
+                <h3>TV-First Design</h3>
+                <p>Eine native Android TV Erfahrung. Keine Maus nötig, perfekt bedienbar mit jeder Fernbedienung.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🤝</div>
+                <h3>Request Bridge</h3>
+                <p>Inhalte fehlen? Integriertes Wunsch-System basierend auf der <a href="https://github.com/Serekay/jellyfin-requests-bridge" style="color:#a5b4fc;">Requests Bridge</a>.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🚀</div>
+                <h3>Leichtgewicht</h3>
+                <p>Fokussiert auf das Wesentliche: Deine Medien. Schnell, ohne Tracking und komplett werbefrei.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Entwickelt mit ❤️ von <a href="https://github.com/Serekay">Serekay</a>.</p>
+        <p>Jellyarc ist Open Source Software.</p>
+    </footer>
+
+    <script>
+        // GitHub Repository Konfiguration
+        const REPO_OWNER = 'Serekay';
+        const REPO_NAME = 'jellyarc';
+        
+        const btn = document.getElementById('download-btn');
+        const versionText = document.getElementById('version-text');
+
+        async function fetchLatestRelease() {
+            try {
+                // Holt die Info über das "Latest Release" von der GitHub API
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest`);
+                
+                if (!response.ok) throw new Error('Release info not found');
+                
+                const data = await response.json();
+                
+                // Sucht nach der .apk Datei in den Assets
+                const apkAsset = data.assets.find(asset => asset.name.endsWith('.apk'));
+                
+                if (apkAsset) {
+                    // Button aktualisieren
+                    btn.href = apkAsset.browser_download_url;
+                    btn.innerHTML = `<span>⬇️</span> Download ${data.tag_name}`;
+                    btn.classList.remove('loading');
+                    
+                    // Zusatzinfo aktualisieren
+                    versionText.innerHTML = `Neuestes Release: <strong>${data.tag_name}</strong> (${(apkAsset.size / 1024 / 1024).toFixed(1)} MB) <br> Veröffentlicht am ${new Date(data.published_at).toLocaleDateString()}`;
+                } else {
+                    // Fallback, falls keine APK gefunden wurde
+                    btn.innerHTML = '📂 Zu den Releases';
+                    versionText.textContent = 'Keine direkte APK im neuesten Release gefunden.';
+                    btn.classList.remove('loading');
+                }
+
+            } catch (error) {
+                console.error('Fehler beim Laden:', error);
+                // Fallback bei Fehler (Link führt zur Release-Übersicht)
+                btn.innerHTML = '📂 GitHub Releases öffnen';
+                versionText.textContent = 'Manuelle Auswahl erforderlich.';
+                btn.classList.remove('loading');
+            }
+        }
+
+        // Script starten
+        fetchLatestRelease();
+    </script>
+</body>
+</html>
