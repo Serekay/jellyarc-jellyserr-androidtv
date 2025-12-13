@@ -636,4 +636,101 @@
     <string name="jellyseerr_update_installing">アップデートをインストール中...</string>
     <string name="jellyseerr_update_installing_message">インストーラーを準備しています。お待ちください。</string>
     <string name="jellyseerr_update_install_button">インストール</string>
+
+    <string name="jellyseerr_collection_label">%1$s コレクション</string>
+    <string name="jellyseerr_collection_show">表示</string>
+    <string name="jellyseerr_no_description">現在説明はありません。</string>
+    <string name="jellyseerr_search_title">検索</string>
+    <string name="jellyseerr_search_button">Jellyseerrで検索</string>
+    <string name="jellyseerr_search_hint">Jellyseerrで映画、シリーズ、俳優を検索</string>
+    <string name="jellyseerr_search_description">リモコンを使用して検索クエリを入力してください</string>
+
+    <!-- Tailscale -->
+    <string name="tailscale_enable_title">Tailscale VPNを使用</string>
+    <string name="tailscale_enable_summary_on">このサーバーはTailscale VPNトンネルを使用しています。</string>
+    <string name="tailscale_enable_summary_off">このサーバーではTailscaleが無効です。</string>
+    <string name="tailscale_login_code_title">ログインコードをリクエスト</string>
+    <string name="tailscale_login_code_summary">Tailnetでデバイスを認証するためのログインコードを開きます。</string>
+    <string name="tailscale_connect_title">VPNに接続</string>
+    <string name="tailscale_connect_summary">組み込みのTailscale VPNサービスを開始します。</string>
+    <string name="tailscale_disconnect_title">VPNを切断</string>
+    <string name="tailscale_disconnect_summary">このデバイスのTailscale VPNトンネルを停止します。</string>
+    <string name="tailscale_disconnect_done">Tailscale接続が切断されました。</string>
+    <string name="tailscale_reset_auth_title">認証をリセット</string>
+    <string name="tailscale_reset_auth_summary">ログイン状態をクリアします（204/「既にログイン済み」の問題に対応）。</string>
+    <string name="tailscale_reset_auth_success">Tailscale認証がリセットされました。</string>
+    <string name="tailscale_enable_first">まずこのサーバーでTailscaleを有効にしてください。</string>
+    <string name="tailscale_section_title">Tailscale</string>
+    <string name="tailscale_setup_button">Tailscaleに接続</string>
+    <string name="tailscale_setup_toast_code">ログインコード: %1$s</string>
+    <string name="tailscale_setup_toast_error">Tailscaleログインコードを取得できませんでした。</string>
+    <string name="connection_type_label">どのように接続しますか？</string>
+    <string name="connect_local_button">ローカル接続</string>
+    <string name="connect_tailscale_button">Tailscale VPN経由</string>
+    <string name="tailscale_connecting_title">Tailscale VPN接続中...</string>
+    <string name="tailscale_connecting_message">管理者にこのコードを伝えてください:\n\n%1$s\n\nダッシュボードで承認を待っています...</string>
+    <string name="tailscale_connected_title">接続完了！</string>
+    <string name="tailscale_connected_message">Tailscale VPNが接続されました。サーバーにアクセスできます。</string>
+    <string name="tailscale_debug_button">Tailscale診断</string>
+    <string name="tailscale_debug_title">Tailscaleステータス</string>
+
+    <!-- Tailscale switching flow -->
+    <string name="edit_server_address_title">サーバーアドレスを入力</string>
+    <string name="edit_server_address_message">正確なサーバーURL（必要に応じてポートを含む）についてはサーバー管理者にお問い合わせください。\n\n例: http://192.168.1.100:8096</string>
+    <string name="edit_server_address_hint">http://your-server-address:port</string>
+    <string name="connection_status_local">ローカル</string>
+    <string name="connection_status_vpn">VPN</string>
+    <string name="tailscale_switching_progress">接続中…</string>
+    <string name="tailscale_connect_failed_toast">接続に失敗しました。Tailscale接続を確認してください。</string>
+
+    <!-- Server Address Selection -->
+    <string name="server_address_selection_title">サーバーアドレスを選択</string>
+    <string name="server_address_selection_message">サーバー管理者がプラグインを設定している場合は自動接続できます。それ以外の場合はサーバーアドレスを手動で入力してください。</string>
+    <string name="server_address_auto">自動（プラグイン経由）</string>
+    <string name="server_address_manual">手動入力</string>
+    <string name="fetching_server_url">プラグインからサーバーURLを取得中…</string>
+    <string name="server_url_fetch_failed_title">自動アドレス取得失敗</string>
+    <string name="server_url_fetch_failed_message">サーバーアドレスを自動取得できませんでした:\n\n%1$s\n\n手動でアドレスを入力しますか？</string>
+
+    <!-- Connection Error Dialog -->
+    <string name="server_connection_failed_title">接続失敗</string>
+    <string name="server_connection_failed_message">入力されたアドレスに到達できません。アドレスを確認して再試行してください。</string>
+
+    <!-- Restart Dialog -->
+    <string name="restart_required_title">再起動が必要</string>
+    <string name="restart_required_message">変更を適用するにはアプリを再起動する必要があります。</string>
+    <string name="restart_now">今すぐ再起動</string>
+
+    <!-- Remove Server Confirmation -->
+    <string name="remove_server_confirm_title">サーバーを削除しますか？</string>
+    <string name="remove_server_confirm_message">このサーバーを削除してよろしいですか？\n\n関連するすべてのアカウントも削除されます。削除後にアプリが再起動します。</string>
+
+    <!-- Tailscale Already Logged In Dialog -->
+    <string name="tailscale_already_logged_in_title">重要: まずデバイスを削除してください</string>
+    <string name="tailscale_already_logged_in_message">最良の結果を得るために、まずTailscaleダッシュボードからこのデバイスを削除してください:\n\n1. Tailscaleダッシュボードを開く\n2. リストからこのデバイスを見つけて削除\n3. OKをクリックしてアクティベーションを続行\n\nこれにより、クリーンな接続設定が保証されます。</string>
+
+    <!-- Tailscale Progress Steps -->
+    <string name="tailscale_step_permission">VPN権限を確認中…</string>
+    <string name="tailscale_step_stopping_vpn">VPN接続を停止中…</string>
+    <string name="tailscale_step_requesting_code">ログインコードをリクエスト中…</string>
+    <string name="tailscale_step_starting_vpn">VPN接続を開始中…</string>
+    <string name="tailscale_step_connecting">VPNに接続中…</string>
+
+    <!-- Tailscale Error Messages -->
+    <string name="tailscale_error_title">エラー</string>
+    <string name="tailscale_auth_required_title">認証が必要</string>
+    <string name="tailscale_auth_required_message">VPNに接続できませんでした。\n\nTailscaleアプリを開いてサインインし、再試行してください。\n\nデバイスがダッシュボードに既に存在する場合は、まず削除してから再試行してください。</string>
+    <string name="tailscale_login_code_failed">ログインコードのリクエストに失敗しました:\n\n%1$s</string>
+    <string name="tailscale_login_code_timeout_title">ログインコードタイムアウト</string>
+    <string name="tailscale_login_code_timeout_message">Tailscaleからログインコードを受信できませんでした。\n\nこれはAndroid TVのバグが原因の可能性があります。以下をお試しください:\n\n1. テレビを完全に再起動する\n2. アプリを再度開く\n3. VPN設定を再試行する</string>
+    <string name="tailscale_vpn_timeout_title">VPNタイムアウト</string>
+    <string name="tailscale_vpn_timeout_message">Tailscaleログインは成功しましたが、VPNに接続できませんでした。\n\nこれはAndroid TVのバグが原因の可能性があります。以下をお試しください:\n\n1. テレビを完全に再起動する\n2. アプリを再度開く\n3. VPN設定を再試行する\n\n問題が続く場合は、Tailscaleダッシュボードを確認してください。</string>
+    <string name="tailscale_login_timeout_title">ログインタイムアウト</string>
+    <string name="tailscale_login_timeout_message">ログインを完了できませんでした。\n\nこれはAndroid TVのバグが原因の可能性があります。以下をお試しください:\n\n1. テレビを完全に再起動する\n2. アプリを再度開く\n3. VPN設定を再試行する\n\nまた、Tailscaleダッシュボードでデバイスが認証されているか確認してください。</string>
+    <string name="tailscale_retry_button">再試行</string>
+    <string name="tailscale_auth_success_title">認証成功</string>
+    <string name="tailscale_auth_success_message">Tailscale VPNが正常に接続されました！\n\nVPNアクセス用のサーバーアドレスを入力できます。</string>
+    <string name="tailscale_vpn_permission_required">VPN権限が必要です。許可して再試行してください。</string>
+    <string name="tailscale_vpn_permission_needed">VPN権限が必要です。</string>
+    <string name="tailscale_error_generic">エラー: %1$s</string>
 </resources>

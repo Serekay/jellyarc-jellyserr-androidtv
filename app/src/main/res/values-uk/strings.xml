@@ -666,4 +666,101 @@
     <string name="jellyseerr_update_installing">Встановлення оновлення…</string>
     <string name="jellyseerr_update_installing_message">Будь ласка, зачекайте, поки інсталятор готується.</string>
     <string name="jellyseerr_update_install_button">Встановити</string>
+
+    <string name="jellyseerr_collection_label">Колекція %1$s</string>
+    <string name="jellyseerr_collection_show">Показати</string>
+    <string name="jellyseerr_no_description">Опис наразі недоступний.</string>
+    <string name="jellyseerr_search_title">Пошук</string>
+    <string name="jellyseerr_search_button">Шукати в Jellyseerr</string>
+    <string name="jellyseerr_search_hint">Шукати фільми, серіали та акторів у Jellyseerr</string>
+    <string name="jellyseerr_search_description">Використовуйте пульт для введення пошукового запиту</string>
+
+    <!-- Tailscale -->
+    <string name="tailscale_enable_title">Використовувати Tailscale VPN</string>
+    <string name="tailscale_enable_summary_on">Цей сервер використовує VPN-тунель Tailscale.</string>
+    <string name="tailscale_enable_summary_off">Tailscale вимкнено для цього сервера.</string>
+    <string name="tailscale_login_code_title">Запросити код входу</string>
+    <string name="tailscale_login_code_summary">Відкриває код входу для авторизації пристрою в Tailnet.</string>
+    <string name="tailscale_connect_title">Підключити VPN</string>
+    <string name="tailscale_connect_summary">Запускає вбудований VPN-сервіс Tailscale.</string>
+    <string name="tailscale_disconnect_title">Від\'єднати VPN</string>
+    <string name="tailscale_disconnect_summary">Зупиняє VPN-тунель Tailscale для цього пристрою.</string>
+    <string name="tailscale_disconnect_done">З\'єднання Tailscale розірвано.</string>
+    <string name="tailscale_reset_auth_title">Скинути авторизацію</string>
+    <string name="tailscale_reset_auth_summary">Очищає статус входу (допомагає при 204/\"вже увійшли\").</string>
+    <string name="tailscale_reset_auth_success">Авторизацію Tailscale скинуто.</string>
+    <string name="tailscale_enable_first">Спочатку увімкніть Tailscale для цього сервера.</string>
+    <string name="tailscale_section_title">Tailscale</string>
+    <string name="tailscale_setup_button">Підключити Tailscale</string>
+    <string name="tailscale_setup_toast_code">Код входу: %1$s</string>
+    <string name="tailscale_setup_toast_error">Не вдалося отримати код входу Tailscale.</string>
+    <string name="connection_type_label">Як ви хочете підключитися?</string>
+    <string name="connect_local_button">Підключитися локально</string>
+    <string name="connect_tailscale_button">Через Tailscale VPN</string>
+    <string name="tailscale_connecting_title">Підключення Tailscale VPN...</string>
+    <string name="tailscale_connecting_message">Передайте цей код адміністратору:\n\n%1$s\n\nОчікування підтвердження в панелі керування...</string>
+    <string name="tailscale_connected_title">Підключено!</string>
+    <string name="tailscale_connected_message">Tailscale VPN тепер підключено. Тепер ви можете ввести адресу сервера.</string>
+    <string name="tailscale_debug_button">Діагностика Tailscale</string>
+    <string name="tailscale_debug_title">Статус Tailscale</string>
+
+    <!-- Tailscale switching flow -->
+    <string name="edit_server_address_title">Введіть адресу сервера</string>
+    <string name="edit_server_address_message">Зв\'яжіться з адміністратором сервера, щоб отримати точну URL-адресу сервера (включаючи порт за потреби).\n\nПриклад: http://192.168.1.100:8096</string>
+    <string name="edit_server_address_hint">http://адреса-сервера:порт</string>
+    <string name="connection_status_local">Локально</string>
+    <string name="connection_status_vpn">VPN</string>
+    <string name="tailscale_switching_progress">Підключення…</string>
+    <string name="tailscale_connect_failed_toast">Не вдалося підключитися. Перевірте з\'єднання Tailscale.</string>
+
+    <!-- Server Address Selection -->
+    <string name="server_address_selection_title">Виберіть адресу сервера</string>
+    <string name="server_address_selection_message">Якщо адміністратор сервера налаштував плагін, ви можете підключитися автоматично. В іншому випадку введіть адресу сервера вручну.</string>
+    <string name="server_address_auto">Автоматично (через плагін)</string>
+    <string name="server_address_manual">Ввести вручну</string>
+    <string name="fetching_server_url">Отримання URL сервера з плагіна…</string>
+    <string name="server_url_fetch_failed_title">Автоматична адреса не отримана</string>
+    <string name="server_url_fetch_failed_message">Не вдалося автоматично отримати адресу сервера:\n\n%1$s\n\nБажаєте ввести адресу вручну?</string>
+
+    <!-- Connection Error Dialog -->
+    <string name="server_connection_failed_title">Не вдалося підключитися</string>
+    <string name="server_connection_failed_message">Введена адреса недоступна. Перевірте адресу та спробуйте ще раз.</string>
+
+    <!-- Restart Dialog -->
+    <string name="restart_required_title">Потрібен перезапуск</string>
+    <string name="restart_required_message">Додаток потрібно перезапустити, щоб зміни набули чинності.</string>
+    <string name="restart_now">Перезапустити зараз</string>
+
+    <!-- Remove Server Confirmation -->
+    <string name="remove_server_confirm_title">Видалити сервер?</string>
+    <string name="remove_server_confirm_message">Ви впевнені, що хочете видалити цей сервер?\n\nЦе також видалить усі пов\'язані облікові записи. Додаток перезапуститься після видалення.</string>
+
+    <!-- Tailscale Already Logged In Dialog -->
+    <string name="tailscale_already_logged_in_title">Важливо: спочатку видаліть пристрій</string>
+    <string name="tailscale_already_logged_in_message">Для найкращих результатів спочатку видаліть цей пристрій з панелі керування Tailscale:\n\n1. Відкрийте панель керування Tailscale\n2. Знайдіть і видаліть цей пристрій зі списку\n3. Натисніть OK, щоб продовжити активацію\n\nЦе забезпечить чисте налаштування з\'єднання.</string>
+
+    <!-- Tailscale Progress Steps -->
+    <string name="tailscale_step_permission">Перевірка дозволу VPN…</string>
+    <string name="tailscale_step_stopping_vpn">Зупинка VPN-з\'єднання…</string>
+    <string name="tailscale_step_requesting_code">Запит коду входу…</string>
+    <string name="tailscale_step_starting_vpn">Запуск VPN-з\'єднання…</string>
+    <string name="tailscale_step_connecting">Підключення до VPN…</string>
+
+    <!-- Tailscale Error Messages -->
+    <string name="tailscale_error_title">Помилка</string>
+    <string name="tailscale_auth_required_title">Потрібна авторизація</string>
+    <string name="tailscale_auth_required_message">Не вдалося підключити VPN.\n\nВідкрийте додаток Tailscale, увійдіть і спробуйте ще раз.\n\nЯкщо пристрій вже є в панелі керування, спочатку видаліть його і спробуйте ще раз.</string>
+    <string name="tailscale_login_code_failed">Не вдалося запросити код входу:\n\n%1$s</string>
+    <string name="tailscale_login_code_timeout_title">Час очікування коду входу вичерпано</string>
+    <string name="tailscale_login_code_timeout_message">Код входу від Tailscale не отримано.\n\nЦе може бути спричинено помилками Android TV. Спробуйте:\n\n1. Повністю перезавантажте телевізор\n2. Відкрийте додаток знову\n3. Спробуйте налаштувати VPN знову</string>
+    <string name="tailscale_vpn_timeout_title">Час очікування VPN вичерпано</string>
+    <string name="tailscale_vpn_timeout_message">Вхід до Tailscale успішний, але VPN не вдалося підключити.\n\nЦе може бути спричинено помилками Android TV. Спробуйте:\n\n1. Повністю перезавантажте телевізор\n2. Відкрийте додаток знову\n3. Спробуйте налаштувати VPN знову\n\nЯкщо проблема не зникає, перевірте панель керування Tailscale.</string>
+    <string name="tailscale_login_timeout_title">Час очікування входу вичерпано</string>
+    <string name="tailscale_login_timeout_message">Не вдалося завершити вхід.\n\nЦе може бути спричинено помилками Android TV. Спробуйте:\n\n1. Повністю перезавантажте телевізор\n2. Відкрийте додаток знову\n3. Спробуйте налаштувати VPN знову\n\nТакож перевірте, чи пристрій авторизовано в панелі керування Tailscale.</string>
+    <string name="tailscale_retry_button">Спробувати ще раз</string>
+    <string name="tailscale_auth_success_title">Авторизація успішна</string>
+    <string name="tailscale_auth_success_message">Tailscale VPN успішно підключено!\n\nТепер ви можете ввести адресу сервера для VPN-доступу.</string>
+    <string name="tailscale_vpn_permission_required">Потрібен дозвіл VPN. Дозвольте і спробуйте ще раз.</string>
+    <string name="tailscale_vpn_permission_needed">Потрібен дозвіл VPN.</string>
+    <string name="tailscale_error_generic">Помилка: %1$s</string>
 </resources>

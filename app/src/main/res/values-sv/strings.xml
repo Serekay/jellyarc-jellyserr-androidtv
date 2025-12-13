@@ -647,4 +647,101 @@
     <string name="jellyseerr_update_installing">Installerar uppdatering...</string>
     <string name="jellyseerr_update_installing_message">Vänta medan installationsprogrammet förbereds.</string>
     <string name="jellyseerr_update_install_button">Installera</string>
+
+    <string name="jellyseerr_collection_label">%1$s-samling</string>
+    <string name="jellyseerr_collection_show">Visa</string>
+    <string name="jellyseerr_no_description">Ingen beskrivning tillgänglig just nu.</string>
+    <string name="jellyseerr_search_title">Sök</string>
+    <string name="jellyseerr_search_button">Sök i Jellyseerr</string>
+    <string name="jellyseerr_search_hint">Sök efter filmer, serier och skådespelare i Jellyseerr</string>
+    <string name="jellyseerr_search_description">Använd fjärrkontrollen för att skriva din sökning</string>
+
+    <!-- Tailscale -->
+    <string name="tailscale_enable_title">Använd Tailscale VPN</string>
+    <string name="tailscale_enable_summary_on">Denna server använder Tailscale VPN-tunneln.</string>
+    <string name="tailscale_enable_summary_off">Tailscale är avstängt för denna server.</string>
+    <string name="tailscale_login_code_title">Begär inloggningskod</string>
+    <string name="tailscale_login_code_summary">Öppnar en inloggningskod för att auktorisera enheten på Tailnet.</string>
+    <string name="tailscale_connect_title">Anslut VPN</string>
+    <string name="tailscale_connect_summary">Startar den inbyggda Tailscale VPN-tjänsten.</string>
+    <string name="tailscale_disconnect_title">Koppla från VPN</string>
+    <string name="tailscale_disconnect_summary">Stoppar Tailscale VPN-tunneln för denna enhet.</string>
+    <string name="tailscale_disconnect_done">Tailscale-anslutningen frånkopplad.</string>
+    <string name="tailscale_reset_auth_title">Återställ autentisering</string>
+    <string name="tailscale_reset_auth_summary">Rensar inloggningsstatus (hjälper vid 204/\"redan inloggad\").</string>
+    <string name="tailscale_reset_auth_success">Tailscale-autentisering återställd.</string>
+    <string name="tailscale_enable_first">Aktivera Tailscale för denna server först.</string>
+    <string name="tailscale_section_title">Tailscale</string>
+    <string name="tailscale_setup_button">Anslut Tailscale</string>
+    <string name="tailscale_setup_toast_code">Inloggningskod: %1$s</string>
+    <string name="tailscale_setup_toast_error">Kunde inte hämta Tailscale-inloggningskoden.</string>
+    <string name="connection_type_label">Hur vill du ansluta?</string>
+    <string name="connect_local_button">Anslut lokalt</string>
+    <string name="connect_tailscale_button">Via Tailscale VPN</string>
+    <string name="tailscale_connecting_title">Tailscale VPN ansluter...</string>
+    <string name="tailscale_connecting_message">Ge din administratör denna kod:\n\n%1$s\n\nVäntar på godkännande i kontrollpanelen...</string>
+    <string name="tailscale_connected_title">Ansluten!</string>
+    <string name="tailscale_connected_message">Tailscale VPN är nu anslutet. Du kan nu ange din server.</string>
+    <string name="tailscale_debug_button">Tailscale-diagnostik</string>
+    <string name="tailscale_debug_title">Tailscale-status</string>
+
+    <!-- Tailscale switching flow -->
+    <string name="edit_server_address_title">Ange serveradress</string>
+    <string name="edit_server_address_message">Kontakta din serveradministratör för att få den exakta server-URL:en (inklusive port vid behov).\n\nExempel: http://192.168.1.100:8096</string>
+    <string name="edit_server_address_hint">http://din-serveradress:port</string>
+    <string name="connection_status_local">Lokal</string>
+    <string name="connection_status_vpn">VPN</string>
+    <string name="tailscale_switching_progress">Ansluter…</string>
+    <string name="tailscale_connect_failed_toast">Kunde inte ansluta. Kontrollera din Tailscale-anslutning.</string>
+
+    <!-- Server Address Selection -->
+    <string name="server_address_selection_title">Välj serveradress</string>
+    <string name="server_address_selection_message">Om din serveradministratör har konfigurerat pluginet kan du ansluta automatiskt. Annars anger du serveradressen manuellt.</string>
+    <string name="server_address_auto">Automatisk (via plugin)</string>
+    <string name="server_address_manual">Manuell inmatning</string>
+    <string name="fetching_server_url">Hämtar server-URL från plugin…</string>
+    <string name="server_url_fetch_failed_title">Automatisk adress misslyckades</string>
+    <string name="server_url_fetch_failed_message">Kunde inte hämta serveradressen automatiskt:\n\n%1$s\n\nVill du ange adressen manuellt?</string>
+
+    <!-- Connection Error Dialog -->
+    <string name="server_connection_failed_title">Anslutningen misslyckades</string>
+    <string name="server_connection_failed_message">Den angivna adressen är inte nåbar. Kontrollera adressen och försök igen.</string>
+
+    <!-- Restart Dialog -->
+    <string name="restart_required_title">Omstart krävs</string>
+    <string name="restart_required_message">Appen måste startas om för att ändringarna ska träda i kraft.</string>
+    <string name="restart_now">Starta om nu</string>
+
+    <!-- Remove Server Confirmation -->
+    <string name="remove_server_confirm_title">Ta bort server?</string>
+    <string name="remove_server_confirm_message">Är du säker på att du vill ta bort denna server?\n\nDetta tar även bort alla associerade konton. Appen startas om efter borttagning.</string>
+
+    <!-- Tailscale Already Logged In Dialog -->
+    <string name="tailscale_already_logged_in_title">Viktigt: Ta bort enheten först</string>
+    <string name="tailscale_already_logged_in_message">För bästa resultat, ta först bort denna enhet från din Tailscale-kontrollpanel:\n\n1. Öppna din Tailscale-kontrollpanel\n2. Hitta och ta bort denna enhet från listan\n3. Klicka OK för att fortsätta med aktiveringen\n\nDetta säkerställer en ren anslutningskonfiguration.</string>
+
+    <!-- Tailscale Progress Steps -->
+    <string name="tailscale_step_permission">Kontrollerar VPN-behörighet…</string>
+    <string name="tailscale_step_stopping_vpn">Stoppar VPN-anslutning…</string>
+    <string name="tailscale_step_requesting_code">Begär inloggningskod…</string>
+    <string name="tailscale_step_starting_vpn">Startar VPN-anslutning…</string>
+    <string name="tailscale_step_connecting">Ansluter till VPN…</string>
+
+    <!-- Tailscale Error Messages -->
+    <string name="tailscale_error_title">Fel</string>
+    <string name="tailscale_auth_required_title">Autentisering krävs</string>
+    <string name="tailscale_auth_required_message">VPN kunde inte ansluta.\n\nÖppna Tailscale-appen, logga in och försök igen.\n\nOm enheten redan finns i din kontrollpanel, ta bort den först och försök igen.</string>
+    <string name="tailscale_login_code_failed">Kunde inte begära inloggningskod:\n\n%1$s</string>
+    <string name="tailscale_login_code_timeout_title">Timeout för inloggningskod</string>
+    <string name="tailscale_login_code_timeout_message">Ingen inloggningskod mottagen från Tailscale.\n\nDetta kan orsakas av Android TV-buggar. Försök:\n\n1. Starta om din TV helt\n2. Öppna appen igen\n3. Försök VPN-konfiguration igen</string>
+    <string name="tailscale_vpn_timeout_title">VPN-timeout</string>
+    <string name="tailscale_vpn_timeout_message">Tailscale-inloggning lyckades, men VPN kunde inte ansluta.\n\nDetta kan orsakas av Android TV-buggar. Försök:\n\n1. Starta om din TV helt\n2. Öppna appen igen\n3. Försök VPN-konfiguration igen\n\nOm problemet kvarstår, kontrollera din Tailscale-kontrollpanel.</string>
+    <string name="tailscale_login_timeout_title">Inloggningstimeout</string>
+    <string name="tailscale_login_timeout_message">Inloggningen kunde inte slutföras.\n\nDetta kan orsakas av Android TV-buggar. Försök:\n\n1. Starta om din TV helt\n2. Öppna appen igen\n3. Försök VPN-konfiguration igen\n\nKontrollera även om enheten har auktoriserats i Tailscale-kontrollpanelen.</string>
+    <string name="tailscale_retry_button">Försök igen</string>
+    <string name="tailscale_auth_success_title">Autentisering lyckades</string>
+    <string name="tailscale_auth_success_message">Tailscale VPN har anslutits framgångsrikt!\n\nDu kan nu ange din serveradress för VPN-åtkomst.</string>
+    <string name="tailscale_vpn_permission_required">VPN-behörighet krävs. Tillåt och försök igen.</string>
+    <string name="tailscale_vpn_permission_needed">VPN-behörighet krävs.</string>
+    <string name="tailscale_error_generic">Fel: %1$s</string>
 </resources>

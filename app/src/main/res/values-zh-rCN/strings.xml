@@ -637,4 +637,101 @@
     <string name="jellyseerr_update_installing">安装更新中…</string>
     <string name="jellyseerr_update_installing_message">请稍候，安装程序正在准备中。</string>
     <string name="jellyseerr_update_install_button">安装</string>
+
+    <string name="jellyseerr_collection_label">%1$s 合集</string>
+    <string name="jellyseerr_collection_show">显示</string>
+    <string name="jellyseerr_no_description">暂无描述。</string>
+    <string name="jellyseerr_search_title">搜索</string>
+    <string name="jellyseerr_search_button">在 Jellyseerr 中搜索</string>
+    <string name="jellyseerr_search_hint">在 Jellyseerr 中搜索电影、电视剧和演员</string>
+    <string name="jellyseerr_search_description">使用遥控器输入您的搜索内容</string>
+
+    <!-- Tailscale -->
+    <string name="tailscale_enable_title">使用 Tailscale VPN</string>
+    <string name="tailscale_enable_summary_on">此服务器正在使用 Tailscale VPN 隧道。</string>
+    <string name="tailscale_enable_summary_off">此服务器已关闭 Tailscale。</string>
+    <string name="tailscale_login_code_title">请求登录代码</string>
+    <string name="tailscale_login_code_summary">打开登录代码以在 Tailnet 上授权设备。</string>
+    <string name="tailscale_connect_title">连接 VPN</string>
+    <string name="tailscale_connect_summary">启动嵌入式 Tailscale VPN 服务。</string>
+    <string name="tailscale_disconnect_title">断开 VPN</string>
+    <string name="tailscale_disconnect_summary">停止此设备的 Tailscale VPN 隧道。</string>
+    <string name="tailscale_disconnect_done">Tailscale 连接已断开。</string>
+    <string name="tailscale_reset_auth_title">重置认证</string>
+    <string name="tailscale_reset_auth_summary">清除登录状态（有助于解决 204/"已登录"问题）。</string>
+    <string name="tailscale_reset_auth_success">Tailscale 认证已重置。</string>
+    <string name="tailscale_enable_first">请先为此服务器启用 Tailscale。</string>
+    <string name="tailscale_section_title">Tailscale</string>
+    <string name="tailscale_setup_button">连接 Tailscale</string>
+    <string name="tailscale_setup_toast_code">登录代码: %1$s</string>
+    <string name="tailscale_setup_toast_error">无法获取 Tailscale 登录代码。</string>
+    <string name="connection_type_label">您想如何连接？</string>
+    <string name="connect_local_button">本地连接</string>
+    <string name="connect_tailscale_button">通过 Tailscale VPN</string>
+    <string name="tailscale_connecting_title">Tailscale VPN 正在连接...</string>
+    <string name="tailscale_connecting_message">请将此代码提供给管理员:\n\n%1$s\n\n等待控制台批准...</string>
+    <string name="tailscale_connected_title">已连接！</string>
+    <string name="tailscale_connected_message">Tailscale VPN 已连接。您现在可以访问服务器。</string>
+    <string name="tailscale_debug_button">Tailscale 诊断</string>
+    <string name="tailscale_debug_title">Tailscale 状态</string>
+
+    <!-- Tailscale switching flow -->
+    <string name="edit_server_address_title">输入服务器地址</string>
+    <string name="edit_server_address_message">请联系您的服务器管理员获取确切的服务器 URL（如需要请包含端口）。\n\n示例: http://192.168.1.100:8096</string>
+    <string name="edit_server_address_hint">http://your-server-address:port</string>
+    <string name="connection_status_local">本地</string>
+    <string name="connection_status_vpn">VPN</string>
+    <string name="tailscale_switching_progress">正在连接…</string>
+    <string name="tailscale_connect_failed_toast">连接失败。请检查您的 Tailscale 连接。</string>
+
+    <!-- Server Address Selection -->
+    <string name="server_address_selection_title">选择服务器地址</string>
+    <string name="server_address_selection_message">如果您的服务器管理员已配置插件，您可以自动连接。否则，请手动输入服务器地址。</string>
+    <string name="server_address_auto">自动（通过插件）</string>
+    <string name="server_address_manual">手动输入</string>
+    <string name="fetching_server_url">正在从插件获取服务器 URL…</string>
+    <string name="server_url_fetch_failed_title">自动获取地址失败</string>
+    <string name="server_url_fetch_failed_message">无法自动获取服务器地址:\n\n%1$s\n\n您要手动输入地址吗？</string>
+
+    <!-- Connection Error Dialog -->
+    <string name="server_connection_failed_title">连接失败</string>
+    <string name="server_connection_failed_message">输入的地址无法访问。请检查地址并重试。</string>
+
+    <!-- Restart Dialog -->
+    <string name="restart_required_title">需要重启</string>
+    <string name="restart_required_message">应用需要重启才能使更改生效。</string>
+    <string name="restart_now">立即重启</string>
+
+    <!-- Remove Server Confirmation -->
+    <string name="remove_server_confirm_title">删除服务器？</string>
+    <string name="remove_server_confirm_message">您确定要删除此服务器吗？\n\n这也将删除所有关联的账户。删除后应用将重启。</string>
+
+    <!-- Tailscale Already Logged In Dialog -->
+    <string name="tailscale_already_logged_in_title">重要：请先删除设备</string>
+    <string name="tailscale_already_logged_in_message">为获得最佳效果，请先从 Tailscale 控制台删除此设备:\n\n1. 打开您的 Tailscale 控制台\n2. 从列表中找到并删除此设备\n3. 点击确定继续激活\n\n这可确保干净的连接设置。</string>
+
+    <!-- Tailscale Progress Steps -->
+    <string name="tailscale_step_permission">正在检查 VPN 权限…</string>
+    <string name="tailscale_step_stopping_vpn">正在停止 VPN 连接…</string>
+    <string name="tailscale_step_requesting_code">正在请求登录代码…</string>
+    <string name="tailscale_step_starting_vpn">正在启动 VPN 连接…</string>
+    <string name="tailscale_step_connecting">正在连接 VPN…</string>
+
+    <!-- Tailscale Error Messages -->
+    <string name="tailscale_error_title">错误</string>
+    <string name="tailscale_auth_required_title">需要认证</string>
+    <string name="tailscale_auth_required_message">VPN 无法连接。\n\n请打开 Tailscale 应用，登录后重试。\n\n如果设备已存在于控制台中，请先删除后重试。</string>
+    <string name="tailscale_login_code_failed">请求登录代码失败:\n\n%1$s</string>
+    <string name="tailscale_login_code_timeout_title">登录代码超时</string>
+    <string name="tailscale_login_code_timeout_message">未从 Tailscale 收到登录代码。\n\n这可能是由 Android TV 的 bug 引起的。请尝试:\n\n1. 完全重启您的电视\n2. 重新打开应用\n3. 再次尝试 VPN 设置</string>
+    <string name="tailscale_vpn_timeout_title">VPN 超时</string>
+    <string name="tailscale_vpn_timeout_message">Tailscale 登录成功，但 VPN 无法连接。\n\n这可能是由 Android TV 的 bug 引起的。请尝试:\n\n1. 完全重启您的电视\n2. 重新打开应用\n3. 再次尝试 VPN 设置\n\n如果问题仍然存在，请检查您的 Tailscale 控制台。</string>
+    <string name="tailscale_login_timeout_title">登录超时</string>
+    <string name="tailscale_login_timeout_message">无法完成登录。\n\n这可能是由 Android TV 的 bug 引起的。请尝试:\n\n1. 完全重启您的电视\n2. 重新打开应用\n3. 再次尝试 VPN 设置\n\n另请检查设备是否已在 Tailscale 控制台中获得授权。</string>
+    <string name="tailscale_retry_button">重试</string>
+    <string name="tailscale_auth_success_title">认证成功</string>
+    <string name="tailscale_auth_success_message">Tailscale VPN 已成功连接！\n\n您现在可以输入服务器地址以通过 VPN 访问。</string>
+    <string name="tailscale_vpn_permission_required">需要 VPN 权限。请允许后重试。</string>
+    <string name="tailscale_vpn_permission_needed">需要 VPN 权限。</string>
+    <string name="tailscale_error_generic">错误: %1$s</string>
 </resources>

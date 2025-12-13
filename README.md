@@ -10,7 +10,7 @@ Jellyarc lets you browse the Jellyseerr discovery catalog and request new conten
 
 ## Requirements
 
-- Android TV 11 or newer (Anrdoird TV < 11 maybe alsow work)
+- Android TV 11 or newer (Anrdoird TV < 11 maybe also work)
 - Jellyfin server with [Requests Bridge Plugin](https://github.com/Serekay/jellyfin-requests-bridge) installed and configured.
 - Optional: Tailscale account for remote access
 

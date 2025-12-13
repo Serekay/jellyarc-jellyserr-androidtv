@@ -637,4 +637,101 @@
     <string name="jellyseerr_update_installing">正在安裝更新…</string>
     <string name="jellyseerr_update_installing_message">正在準備安裝程式，請稍候。</string>
     <string name="jellyseerr_update_install_button">安裝</string>
+
+    <string name="jellyseerr_collection_label">%1$s 合集</string>
+    <string name="jellyseerr_collection_show">顯示</string>
+    <string name="jellyseerr_no_description">目前沒有描述。</string>
+    <string name="jellyseerr_search_title">搜尋</string>
+    <string name="jellyseerr_search_button">在 Jellyseerr 中搜尋</string>
+    <string name="jellyseerr_search_hint">在 Jellyseerr 中搜尋電影、影集和演員</string>
+    <string name="jellyseerr_search_description">使用遙控器輸入您的搜尋內容</string>
+
+    <!-- Tailscale -->
+    <string name="tailscale_enable_title">使用 Tailscale VPN</string>
+    <string name="tailscale_enable_summary_on">此伺服器正在使用 Tailscale VPN 通道。</string>
+    <string name="tailscale_enable_summary_off">此伺服器已關閉 Tailscale。</string>
+    <string name="tailscale_login_code_title">請求登入代碼</string>
+    <string name="tailscale_login_code_summary">開啟登入代碼以在 Tailnet 上授權裝置。</string>
+    <string name="tailscale_connect_title">連接 VPN</string>
+    <string name="tailscale_connect_summary">啟動內嵌的 Tailscale VPN 服務。</string>
+    <string name="tailscale_disconnect_title">中斷 VPN</string>
+    <string name="tailscale_disconnect_summary">停止此裝置的 Tailscale VPN 通道。</string>
+    <string name="tailscale_disconnect_done">Tailscale 連線已中斷。</string>
+    <string name="tailscale_reset_auth_title">重設認證</string>
+    <string name="tailscale_reset_auth_summary">清除登入狀態（有助於解決 204/「已登入」問題）。</string>
+    <string name="tailscale_reset_auth_success">Tailscale 認證已重設。</string>
+    <string name="tailscale_enable_first">請先為此伺服器啟用 Tailscale。</string>
+    <string name="tailscale_section_title">Tailscale</string>
+    <string name="tailscale_setup_button">連接 Tailscale</string>
+    <string name="tailscale_setup_toast_code">登入代碼：%1$s</string>
+    <string name="tailscale_setup_toast_error">無法取得 Tailscale 登入代碼。</string>
+    <string name="connection_type_label">您想如何連接？</string>
+    <string name="connect_local_button">本地連接</string>
+    <string name="connect_tailscale_button">透過 Tailscale VPN</string>
+    <string name="tailscale_connecting_title">Tailscale VPN 正在連接...</string>
+    <string name="tailscale_connecting_message">請將此代碼提供給管理員：\n\n%1$s\n\n等待控制台批准...</string>
+    <string name="tailscale_connected_title">已連接！</string>
+    <string name="tailscale_connected_message">Tailscale VPN 已連接。您現在可以存取伺服器。</string>
+    <string name="tailscale_debug_button">Tailscale 診斷</string>
+    <string name="tailscale_debug_title">Tailscale 狀態</string>
+
+    <!-- Tailscale switching flow -->
+    <string name="edit_server_address_title">輸入伺服器地址</string>
+    <string name="edit_server_address_message">請聯繫您的伺服器管理員取得正確的伺服器 URL（如需要請包含連接埠）。\n\n範例：http://192.168.1.100:8096</string>
+    <string name="edit_server_address_hint">http://your-server-address:port</string>
+    <string name="connection_status_local">本地</string>
+    <string name="connection_status_vpn">VPN</string>
+    <string name="tailscale_switching_progress">正在連接…</string>
+    <string name="tailscale_connect_failed_toast">連接失敗。請檢查您的 Tailscale 連線。</string>
+
+    <!-- Server Address Selection -->
+    <string name="server_address_selection_title">選擇伺服器地址</string>
+    <string name="server_address_selection_message">如果您的伺服器管理員已設定外掛，您可以自動連接。否則，請手動輸入伺服器地址。</string>
+    <string name="server_address_auto">自動（透過外掛）</string>
+    <string name="server_address_manual">手動輸入</string>
+    <string name="fetching_server_url">正在從外掛取得伺服器 URL…</string>
+    <string name="server_url_fetch_failed_title">自動取得地址失敗</string>
+    <string name="server_url_fetch_failed_message">無法自動取得伺服器地址：\n\n%1$s\n\n您要手動輸入地址嗎？</string>
+
+    <!-- Connection Error Dialog -->
+    <string name="server_connection_failed_title">連接失敗</string>
+    <string name="server_connection_failed_message">輸入的地址無法存取。請檢查地址並重試。</string>
+
+    <!-- Restart Dialog -->
+    <string name="restart_required_title">需要重新啟動</string>
+    <string name="restart_required_message">應用程式需要重新啟動才能使變更生效。</string>
+    <string name="restart_now">立即重新啟動</string>
+
+    <!-- Remove Server Confirmation -->
+    <string name="remove_server_confirm_title">移除伺服器？</string>
+    <string name="remove_server_confirm_message">您確定要移除此伺服器嗎？\n\n這也將移除所有關聯的帳號。移除後應用程式將重新啟動。</string>
+
+    <!-- Tailscale Already Logged In Dialog -->
+    <string name="tailscale_already_logged_in_title">重要：請先移除裝置</string>
+    <string name="tailscale_already_logged_in_message">為獲得最佳效果，請先從 Tailscale 控制台移除此裝置：\n\n1. 開啟您的 Tailscale 控制台\n2. 從清單中找到並移除此裝置\n3. 按確定繼續啟用\n\n這可確保乾淨的連線設定。</string>
+
+    <!-- Tailscale Progress Steps -->
+    <string name="tailscale_step_permission">正在檢查 VPN 權限…</string>
+    <string name="tailscale_step_stopping_vpn">正在停止 VPN 連線…</string>
+    <string name="tailscale_step_requesting_code">正在請求登入代碼…</string>
+    <string name="tailscale_step_starting_vpn">正在啟動 VPN 連線…</string>
+    <string name="tailscale_step_connecting">正在連接 VPN…</string>
+
+    <!-- Tailscale Error Messages -->
+    <string name="tailscale_error_title">錯誤</string>
+    <string name="tailscale_auth_required_title">需要認證</string>
+    <string name="tailscale_auth_required_message">VPN 無法連接。\n\n請開啟 Tailscale 應用程式，登入後重試。\n\n如果裝置已存在於控制台中，請先移除後重試。</string>
+    <string name="tailscale_login_code_failed">請求登入代碼失敗：\n\n%1$s</string>
+    <string name="tailscale_login_code_timeout_title">登入代碼逾時</string>
+    <string name="tailscale_login_code_timeout_message">未從 Tailscale 收到登入代碼。\n\n這可能是由 Android TV 的錯誤引起的。請嘗試：\n\n1. 完全重新啟動您的電視\n2. 重新開啟應用程式\n3. 再次嘗試 VPN 設定</string>
+    <string name="tailscale_vpn_timeout_title">VPN 逾時</string>
+    <string name="tailscale_vpn_timeout_message">Tailscale 登入成功，但 VPN 無法連接。\n\n這可能是由 Android TV 的錯誤引起的。請嘗試：\n\n1. 完全重新啟動您的電視\n2. 重新開啟應用程式\n3. 再次嘗試 VPN 設定\n\n如果問題仍然存在，請檢查您的 Tailscale 控制台。</string>
+    <string name="tailscale_login_timeout_title">登入逾時</string>
+    <string name="tailscale_login_timeout_message">無法完成登入。\n\n這可能是由 Android TV 的錯誤引起的。請嘗試：\n\n1. 完全重新啟動您的電視\n2. 重新開啟應用程式\n3. 再次嘗試 VPN 設定\n\n另請檢查裝置是否已在 Tailscale 控制台中獲得授權。</string>
+    <string name="tailscale_retry_button">重試</string>
+    <string name="tailscale_auth_success_title">認證成功</string>
+    <string name="tailscale_auth_success_message">Tailscale VPN 已成功連接！\n\n您現在可以輸入伺服器地址以透過 VPN 存取。</string>
+    <string name="tailscale_vpn_permission_required">需要 VPN 權限。請允許後重試。</string>
+    <string name="tailscale_vpn_permission_needed">需要 VPN 權限。</string>
+    <string name="tailscale_error_generic">錯誤：%1$s</string>
 </resources>

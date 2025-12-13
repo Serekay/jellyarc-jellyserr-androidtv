@@ -113,7 +113,7 @@ dependencies {
 	implementation(projects.tailscaleFull)
 
 	// Tailscale native library (must be in app module, not library modules)
-	implementation(files("../third_party/tailscale-android/android/libs/libtailscale.aar"))
+	implementation(files("../tailscale-full/libs/libtailscale.aar"))
 	implementation(libs.jellyfin.sdk) {
 		// Change version if desired
 		val sdkVersion = findProperty("sdk.version")?.toString()

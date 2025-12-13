@@ -1,4 +1,0 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-	<!-- The bundled libtailscale AAR declares its own minSdk and VPN components.
-	     This manifest intentionally leaves out a package attribute; namespace is set in Gradle. -->
-</manifest>

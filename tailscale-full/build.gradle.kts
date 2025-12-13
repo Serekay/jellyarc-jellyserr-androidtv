@@ -72,5 +72,5 @@ dependencies {
 	implementation(libs.timber)
 
 	// libtailscale AAR - compileOnly here, actual dependency provided by app module
-	compileOnly(files("../third_party/tailscale-android/android/libs/libtailscale.aar"))
+	compileOnly(files("libs/libtailscale.aar"))
 }

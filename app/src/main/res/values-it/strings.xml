@@ -657,4 +657,100 @@
     <string name="jellyseerr_update_installing">Installazione aggiornamento…</string>
     <string name="jellyseerr_update_installing_message">Attendere mentre l\'installatore viene preparato.</string>
     <string name="jellyseerr_update_install_button">Installa</string>
+    <string name="jellyseerr_collection_label">Collezione %1$s</string>
+    <string name="jellyseerr_collection_show">Mostra</string>
+    <string name="jellyseerr_no_description">Nessuna descrizione disponibile al momento.</string>
+    <string name="jellyseerr_search_title">Cerca</string>
+    <string name="jellyseerr_search_button">Cerca in Jellyseerr</string>
+    <string name="jellyseerr_search_hint">Cerca film, serie e attori in Jellyseerr</string>
+    <string name="jellyseerr_search_description">Usa il telecomando per digitare la tua ricerca</string>
+
+    <!-- Tailscale -->
+    <string name="tailscale_enable_title">Usa Tailscale VPN</string>
+    <string name="tailscale_enable_summary_on">Questo server utilizza il tunnel VPN Tailscale.</string>
+    <string name="tailscale_enable_summary_off">Tailscale è disattivato per questo server.</string>
+    <string name="tailscale_login_code_title">Richiedi codice di accesso</string>
+    <string name="tailscale_login_code_summary">Apre un codice di accesso per autorizzare il dispositivo sul Tailnet.</string>
+    <string name="tailscale_connect_title">Connetti VPN</string>
+    <string name="tailscale_connect_summary">Avvia il servizio VPN Tailscale integrato.</string>
+    <string name="tailscale_disconnect_title">Disconnetti VPN</string>
+    <string name="tailscale_disconnect_summary">Arresta il tunnel VPN Tailscale per questo dispositivo.</string>
+    <string name="tailscale_disconnect_done">Connessione Tailscale disconnessa.</string>
+    <string name="tailscale_reset_auth_title">Reimposta autenticazione</string>
+    <string name="tailscale_reset_auth_summary">Cancella lo stato di accesso (aiuta con 204/\"già connesso\").</string>
+    <string name="tailscale_reset_auth_success">Autenticazione Tailscale reimpostata.</string>
+    <string name="tailscale_enable_first">Attiva prima Tailscale per questo server.</string>
+    <string name="tailscale_section_title">Tailscale</string>
+    <string name="tailscale_setup_button">Connetti Tailscale</string>
+    <string name="tailscale_setup_toast_code">Codice di accesso: %1$s</string>
+    <string name="tailscale_setup_toast_error">Impossibile ottenere il codice di accesso Tailscale.</string>
+    <string name="connection_type_label">Come vuoi connetterti?</string>
+    <string name="connect_local_button">Connessione locale</string>
+    <string name="connect_tailscale_button">Tramite Tailscale VPN</string>
+    <string name="tailscale_connecting_title">Connessione Tailscale VPN in corso...</string>
+    <string name="tailscale_connecting_message">Dai questo codice al tuo amministratore:\n\n%1$s\n\nIn attesa di approvazione nel pannello di controllo...</string>
+    <string name="tailscale_connected_title">Connesso!</string>
+    <string name="tailscale_connected_message">Tailscale VPN è ora connesso. Ora puoi inserire il tuo server.</string>
+    <string name="tailscale_debug_button">Diagnostica Tailscale</string>
+    <string name="tailscale_debug_title">Stato Tailscale</string>
+
+    <!-- Tailscale switching flow -->
+    <string name="edit_server_address_title">Inserisci indirizzo server</string>
+    <string name="edit_server_address_message">Contatta il tuo amministratore del server per ottenere l\'URL esatto (inclusa la porta se necessario).\n\nEsempio: http://192.168.1.100:8096</string>
+    <string name="edit_server_address_hint">http://indirizzo-server:porta</string>
+    <string name="connection_status_local">Locale</string>
+    <string name="connection_status_vpn">VPN</string>
+    <string name="tailscale_switching_progress">Connessione in corso…</string>
+    <string name="tailscale_connect_failed_toast">Connessione fallita. Verifica la tua connessione Tailscale.</string>
+
+    <!-- Server Address Selection -->
+    <string name="server_address_selection_title">Seleziona indirizzo server</string>
+    <string name="server_address_selection_message">Se il tuo amministratore ha configurato il plugin, puoi connetterti automaticamente. Altrimenti, inserisci l\'indirizzo del server manualmente.</string>
+    <string name="server_address_auto">Automatico (tramite plugin)</string>
+    <string name="server_address_manual">Inserimento manuale</string>
+    <string name="fetching_server_url">Recupero URL del server dal plugin…</string>
+    <string name="server_url_fetch_failed_title">Indirizzo automatico fallito</string>
+    <string name="server_url_fetch_failed_message">Impossibile recuperare automaticamente l\'indirizzo del server:\n\n%1$s\n\nVuoi inserire l\'indirizzo manualmente?</string>
+
+    <!-- Connection Error Dialog -->
+    <string name="server_connection_failed_title">Connessione fallita</string>
+    <string name="server_connection_failed_message">L\'indirizzo inserito non è raggiungibile. Verifica l\'indirizzo e riprova.</string>
+
+    <!-- Restart Dialog -->
+    <string name="restart_required_title">Riavvio richiesto</string>
+    <string name="restart_required_message">L\'applicazione deve essere riavviata per applicare le modifiche.</string>
+    <string name="restart_now">Riavvia ora</string>
+
+    <!-- Remove Server Confirmation -->
+    <string name="remove_server_confirm_title">Rimuovere il server?</string>
+    <string name="remove_server_confirm_message">Sei sicuro di voler rimuovere questo server?\n\nQuesto rimuoverà anche tutti gli account associati. L\'applicazione si riavvierà dopo la rimozione.</string>
+
+    <!-- Tailscale Already Logged In Dialog -->
+    <string name="tailscale_already_logged_in_title">Importante: Rimuovi prima il dispositivo</string>
+    <string name="tailscale_already_logged_in_message">Per risultati migliori, rimuovi prima questo dispositivo dal tuo pannello Tailscale:\n\n1. Apri il tuo pannello Tailscale\n2. Trova e rimuovi questo dispositivo dalla lista\n3. Clicca OK per continuare con l\'attivazione\n\nQuesto garantisce una configurazione di connessione pulita.</string>
+
+    <!-- Tailscale Progress Steps -->
+    <string name="tailscale_step_permission">Verifica permesso VPN…</string>
+    <string name="tailscale_step_stopping_vpn">Arresto connessione VPN…</string>
+    <string name="tailscale_step_requesting_code">Richiesta codice di accesso…</string>
+    <string name="tailscale_step_starting_vpn">Avvio connessione VPN…</string>
+    <string name="tailscale_step_connecting">Connessione alla VPN…</string>
+
+    <!-- Tailscale Error Messages -->
+    <string name="tailscale_error_title">Errore</string>
+    <string name="tailscale_auth_required_title">Autenticazione richiesta</string>
+    <string name="tailscale_auth_required_message">Impossibile connettere la VPN.\n\nApri l\'app Tailscale, accedi e riprova.\n\nSe il dispositivo esiste già nel tuo pannello, rimuovilo prima e riprova.</string>
+    <string name="tailscale_login_code_failed">Impossibile richiedere il codice di accesso:\n\n%1$s</string>
+    <string name="tailscale_login_code_timeout_title">Timeout codice di accesso</string>
+    <string name="tailscale_login_code_timeout_message">Nessun codice di accesso ricevuto da Tailscale.\n\nQuesto può essere causato da bug di Android TV. Prova:\n\n1. Riavvia completamente la TV\n2. Riapri l\'app\n3. Riprova la configurazione VPN</string>
+    <string name="tailscale_vpn_timeout_title">Timeout VPN</string>
+    <string name="tailscale_vpn_timeout_message">L\'accesso Tailscale è riuscito, ma la VPN non è riuscita a connettersi.\n\nQuesto può essere causato da bug di Android TV. Prova:\n\n1. Riavvia completamente la TV\n2. Riapri l\'app\n3. Riprova la configurazione VPN\n\nSe il problema persiste, controlla il tuo pannello Tailscale.</string>
+    <string name="tailscale_login_timeout_title">Timeout accesso</string>
+    <string name="tailscale_login_timeout_message">L\'accesso non è stato completato.\n\nQuesto può essere causato da bug di Android TV. Prova:\n\n1. Riavvia completamente la TV\n2. Riapri l\'app\n3. Riprova la configurazione VPN\n\nVerifica anche se il dispositivo è stato autorizzato nel pannello Tailscale.</string>
+    <string name="tailscale_retry_button">Riprova</string>
+    <string name="tailscale_auth_success_title">Autenticazione riuscita</string>
+    <string name="tailscale_auth_success_message">Tailscale VPN è stato connesso con successo!\n\nOra puoi inserire l\'indirizzo del tuo server per l\'accesso VPN.</string>
+    <string name="tailscale_vpn_permission_required">Permesso VPN richiesto. Consenti e riprova.</string>
+    <string name="tailscale_vpn_permission_needed">Permesso VPN richiesto.</string>
+    <string name="tailscale_error_generic">Errore: %1$s</string>
 </resources>
